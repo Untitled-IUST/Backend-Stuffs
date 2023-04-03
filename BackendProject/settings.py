@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-import os
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,12 +41,10 @@ INSTALLED_APPS = [
     "Auth",
     "rest_framework",
     'rest_framework_simplejwt',
-    "corsheaders",
-    "Barber",
- ]
+    'Barber',
+]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -59,17 +55,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "BackendProject.urls"
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates/'), ],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -95,7 +85,7 @@ DATABASES = {
         'NAME': 'tahlil_project',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'ferz2020'
+        'PASSWORD': 'amirmysql2023'
     }
 }
 

@@ -18,10 +18,5 @@ from django.urls import path,include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-<<<<<<< HEAD:BackendProject/urls.py
-    path("auth/",include('Auth.urls'))
-=======
     path("auth/",include('Auth.urls')),
-    # path('', include("react_frontend.urls")),
->>>>>>> a3b2d80fab8b6921862aead7442c84b29febba87:BackendProject/BackendProject/urls.py
 ]
