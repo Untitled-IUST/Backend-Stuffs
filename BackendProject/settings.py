@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     'Barber',
+    "Customer",
 ]
 
 MIDDLEWARE = [
@@ -85,7 +86,7 @@ DATABASES = {
         'NAME': 'tahlil_project',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'amirmysql2023'
+        'PASSWORD': 'ferz2020'
     }
 }
 
