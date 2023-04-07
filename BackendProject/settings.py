@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     "Auth",
     'Barber',
@@ -100,8 +99,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
-    "UPDATE_LAST_LOGIN": True,
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 

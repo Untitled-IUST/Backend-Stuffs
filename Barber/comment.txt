@@ -12,6 +12,9 @@ this is for barber-selection task. in these codes i try to update database in se
     # # calc = Rate.objects.select_related('Barber').all()
     # # rate = round(calc.aggregate(avg_rate=Avg('stars'))['avg_rate'], 2)
 
-
+  # def update_rate(self):
+  #     avg_stars = Rate.objects.filter(barbershop=self).aggregate(avg_rate=Avg('stars'))['avg_rate']
+  #     self.rate = round(avg_stars, 2) if avg_stars else 1
+  #     self.save()
 
 -------------------------------------------------------------------------------------------------------------------
