@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 class CustomerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['first_name','last_name','phone_Number','email']
+        fields = ['first_name','last_name','phone_Number','email', "profile_picture"]
 
 # class UserSerializer(serializers.ModelSerializer):
 #     class Meta:

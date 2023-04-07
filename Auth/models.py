@@ -32,10 +32,11 @@ class Customer(AbstractBaseUser, PermissionsMixin):
   
   first_name = models.CharField(max_length=255)
   last_name = models.CharField(max_length=255)
+  profile_picture = models.ImageField(null=True,error_messages={'invalid':"Image files only"},upload_to='profile_pictures/',blank=True,default="/default_profile.png")
   phone_Number = models.CharField(max_length=11,unique=True)
   email = models.EmailField(unique=True)
-  gender = models.CharField(max_length=6,choices=Gender_Choices)
   password = models.CharField(max_length=255,unique=True)
+  gender = models.CharField(max_length=6,choices=Gender_Choices)
   objects = CustomUserManager()
 
 #   USERNAME_FIELD = 'email'
