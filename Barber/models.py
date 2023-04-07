@@ -7,6 +7,7 @@ class Rate(models.Model):
   stars = models.FloatField()
 
 class Barber(models.Model):
+  # profile_img = models.ImageField(upload_to='images/')
   BarberShop = models.CharField(max_length=255,unique=True)
   Owner = models.CharField(max_length=255)
   Parvaneh = models.CharField(max_length=10,unique=True)
