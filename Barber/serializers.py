@@ -9,11 +9,6 @@ class BarberSerializer(serializers.ModelSerializer):
         fields = ['BarberShop','Owner','phone_Number','address',"rate"]
 
 
-
-
-
-
-
 class RateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate

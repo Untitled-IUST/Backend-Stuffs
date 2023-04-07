@@ -11,8 +11,8 @@ class BarberView(ModelViewSet):
     queryset = Barber.objects.all()
     serializer_class = BarberSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['rate']
-    search_fields = ['BarberShop','address']
+    filterset_fields = ['address','rate']
+    search_fields = ['BarberShop']
     ordering_fields = ['rate']
 
 # class BarberView(ModelViewSet):
