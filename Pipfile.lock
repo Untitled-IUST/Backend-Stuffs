@@ -77,6 +77,7 @@
             "index": "pypi",
             "version": "==2.1.1"
         },
+
         "pyjwt": {
             "hashes": [
                 "sha256:69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd",

@@ -1,6 +1,6 @@
-
--- this is our first query
 use tahlil_project;
+
+-- this query is designed for calculating Rate of each barbershop
 SET SQL_SAFE_UPDATES=0;
 UPDATE barber_barber
 JOIN (
@@ -11,6 +11,7 @@ JOIN (
 ON barber_barber.id = subquery.barbershop_id
 SET barber_barber.rate = ROUND(FORMAT(subquery.avg_stars,2));
 SET SQL_SAFE_UPDATES=1;
-select * from barber_barber
+/*select * from barber_barber*/
+
 
 
