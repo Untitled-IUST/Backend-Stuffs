@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter,OrderingFilter
 from .models import Barber,BarberShopImages,Rate
 from .serializers import BarberSerializer,BarberShopImagesSerializer,RateSerializer
+from .filters import BarberRateFilter
 
 
 
@@ -11,7 +12,7 @@ class BarberView(ModelViewSet):
     queryset = Barber.objects.all()
     serializer_class = BarberSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['address','rate']
+    filterset_class = BarberRateFilter
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
 
