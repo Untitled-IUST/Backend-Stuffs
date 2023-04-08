@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter,OrderingFilter
-from .models import Barber,Rate
-from .serializers import BarberSerializer,RateSerializer
+from .models import Barber,BarberShopImages,Rate
+from .serializers import BarberSerializer,BarberShopImagesSerializer,RateSerializer
 
 
 
@@ -14,6 +14,18 @@ class BarberView(ModelViewSet):
     filterset_fields = ['address','rate']
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
+
+
+class BarberShopImagesView(ModelViewSet):
+    serializer_class = BarberShopImagesSerializer
+
+    def get_serializer_context(self):
+        return {'barbershop_id':self.kwargs['barbershop_pk']}
+
+    def get_queryset(self):
+        return BarberShopImages.objects.filter(barbershop_id=self.kwargs['barbershop_pk'])
+
+
 
 # class BarberView(ModelViewSet):
 #     queryset = Barber.objects.all()

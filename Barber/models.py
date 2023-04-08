@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Avg
 
   
 class Rate(models.Model):
@@ -14,6 +13,11 @@ class Barber(models.Model):
   email = models.EmailField(unique=True)
   address = models.CharField(max_length=255)
   rate = models.FloatField(default=1)
+
+class BarberShopImages(models.Model):
+  barbershop = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='images')
+  background = models.ImageField(upload_to='Barber/backg')
+  logo = models.ImageField(upload_to='Barber/Logo')
 
 
 
