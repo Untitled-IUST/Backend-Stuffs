@@ -52,6 +52,7 @@ class Customer(AbstractBaseUser, PermissionsMixin):
     )
   
 
+
     
     
 class Barber(AbstractBaseUser, PermissionsMixin):
@@ -63,6 +64,7 @@ class Barber(AbstractBaseUser, PermissionsMixin):
   address = models.CharField(max_length=255)
   password = models.CharField(max_length=255,unique=True)
   objects = CustomUserManager()
+  
 
   groups = models.ManyToManyField(
         Group,
@@ -73,3 +75,13 @@ class Barber(AbstractBaseUser, PermissionsMixin):
         related_name='barber_user_permissions'
     )
 
+class Comment(models.Model):
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+  body = models.TextField(max_length=1000)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+  def __str__(self):
+    return f'{self.comment} By: {self.customer}'
+  class Meta:
+    ordering = ['-created_at']
