@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'tahlil_project',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'amirmysql2023'
+        'PASSWORD': 'ferz2020'
     }
 }
 
