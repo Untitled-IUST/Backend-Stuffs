@@ -1,5 +1,6 @@
 from django.db import models
-from Auth.models import Customer, Barber as BarberModel
+from Auth.models import  Barber as BarberModel, Customer
+
 
 
 class Barber(models.Model):
