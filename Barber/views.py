@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.generics import RetrieveAPIView, ListCreateAPIView
 from .models import Barber, Comment
 from Auth.models import Barber as BarberModel_Auth 
-from .serializers import BarberSerializer, BarberWithCommentsSerializer
+from .serializers import BarberSerializer, BarberWithCommentsSerializer, CommentSerializer
 
 
 
@@ -27,4 +27,8 @@ class BarberDetail(ListCreateAPIView):
     #     data['comments'] = connected_comments
     #     data['no_of_comments'] = number_of_comments
         # data['comment_form'] = CommentForm()
-    
+
+class CommentView(ListCreateAPIView):
+    queryset = Comment.objects.all() 
+    serializer_class = CommentSerializer
+    # lookup_field=

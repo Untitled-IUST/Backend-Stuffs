@@ -38,7 +38,7 @@ class Customer(AbstractBaseUser, PermissionsMixin):
   password = models.CharField(max_length=255,unique=True)
   gender = models.CharField(max_length=6,choices=Gender_Choices)
   objects = CustomUserManager()
-
+  USERNAME_FIELD = 'email'
 #   USERNAME_FIELD = 'email'
 #   REQUIRED_FIELDS = ['first_name', 'last_name']
     
@@ -64,7 +64,7 @@ class Barber(AbstractBaseUser, PermissionsMixin):
   address = models.CharField(max_length=255)
   password = models.CharField(max_length=255,unique=True)
   objects = CustomUserManager()
-  
+  USERNAME_FIELD = 'email'  
 
   groups = models.ManyToManyField(
         Group,

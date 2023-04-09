@@ -13,7 +13,7 @@ class Barber(models.Model):
 
 
 class Comment(models.Model):
-  customer = models.ForeignKey(Customer,on_delete=models.CASCADE)
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="author_comments")
   barber = models.ForeignKey(BarberModel,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000)
   created_at = models.DateTimeField(auto_now_add=True)
@@ -23,7 +23,7 @@ class Comment(models.Model):
     ordering = ['-created_at']
     
   def __str__(self):
-    return f'{self.comment} By: {self.customer}'
+    return f'"{self.body}" By: {self.customer}'
   
 
   @property
