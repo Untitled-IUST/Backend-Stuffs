@@ -9,7 +9,7 @@ router.register('info',views.BarberView,basename='info')
 
 
 barber_router = routers.NestedDefaultRouter(router,'info',lookup='barbershop')
-barber_router.register('images',views.BarberShopImagesView,basename='images')
+# barber_router.register('images',views.BarberShopImagesView,basename='images')
 
 urlpatterns = router.urls + barber_router.urls
 
