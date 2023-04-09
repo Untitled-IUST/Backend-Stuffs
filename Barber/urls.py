@@ -3,5 +3,6 @@ from .views import BarberView
 
 
 urlpatterns = [
-    path('info/<int:pk>/',BarberView.as_view(),name='Barber info')
+    path('info/<int:pk>/',BarberView.as_view(),name='Barber info'),
+    
 ]
