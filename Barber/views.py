@@ -13,22 +13,9 @@ class BarberView(RetrieveAPIView):
 
 
 class BarberDetail(RetrieveUpdateAPIView):
-    # model= BarberModel_Auth
     queryset = BarberModel_Auth.objects.all() #applied no filters yet!
     serializer_class = BarberWithCommentsSerializer
-    # def get_queryset(self):
-    #     data = super().get_queryset()
-    #     comments = data.comments
-    #     return comments
     
-    # def get_context_data(self , **kwargs):
-    #     data = super().get_context_data(**kwargs)
-    #     connected_comments = Comment.objects.filter(CommentPost=self.get_object())
-    #     number_of_comments = connected_comments.count()
-    #     data['comments'] = connected_comments
-    #     data['no_of_comments'] = number_of_comments
-        # data['comment_form'] = CommentForm()
-
 class CommentView(ListCreateAPIView):
     queryset = Comment.objects.all() 
     serializer_class = CommentSerializer

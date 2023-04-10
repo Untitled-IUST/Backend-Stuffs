@@ -21,14 +21,11 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
-        # exclude   
         
         
 class BarberWithCommentsSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many = True)
     class Meta:
         model = BarberModel_Auth
-        # fields = ("customer", "body", "barber", "created_at", "parent_comment",)
         fields =['BarberShop','Owner','phone_Number','address', "comments"]
-        # fields = "__all__"
         read_only_fields = ( "created_at",) 

@@ -39,8 +39,6 @@ class Customer(AbstractBaseUser, PermissionsMixin):
   gender = models.CharField(max_length=6,choices=Gender_Choices)
   objects = CustomUserManager()
   USERNAME_FIELD = 'email'
-#   USERNAME_FIELD = 'email'
-#   REQUIRED_FIELDS = ['first_name', 'last_name']
     
   groups = models.ManyToManyField(
         Group,

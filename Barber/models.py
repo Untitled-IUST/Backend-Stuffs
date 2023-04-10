@@ -17,7 +17,6 @@ class Comment(models.Model):
   barber = models.ForeignKey(BarberModel,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000)
   created_at = models.DateTimeField(auto_now_add=True)
-  # updated_at = models.DateTimeField(auto_now=True)
   parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
   class Meta:
     ordering = ['-created_at']
