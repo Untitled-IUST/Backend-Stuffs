@@ -11,6 +11,9 @@ django-filter = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
 pillow = "*"
+django-computedfields = "*"
+django-mysql = "*"
+drf-nested-routers = "*"
 
 [dev-packages]
 

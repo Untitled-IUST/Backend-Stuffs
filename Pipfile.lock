@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b0d6012924ce987f77676627a77621dde7c50a2463da768c53f5301b886e5f6d"
+            "sha256": "1fc646b6a787a82c344474141f617e07ff141f6f9a4e0a2fa1323c69ebcefa15"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,11 +26,18 @@
         },
         "django": {
             "hashes": [
-                "sha256:ad33ed68db9398f5dfb33282704925bce044bef4261cd4fb59e4e7f9ae505a78",
-                "sha256:c36e2ab12824e2ac36afa8b2515a70c53c7742f0d6eaefa7311ec379558db997"
+                "sha256:43253f4b4a2c3a1694cd52d3517847271934c84dbd060ca0e82a9f90e569dab3",
+                "sha256:dba9dd0bf8b748aa9c98d6c679f8b1c0bfa43124844bea9425ad9ba0cd5e65c3"
             ],
             "index": "pypi",
-            "version": "==4.2"
+            "version": "==4.1.8"
+        },
+        "django-computedfields": {
+            "hashes": [
+                "sha256:51d1fbe4e716213caf11fe5b3beae4708de380fbfb3a210e3d83c342c7cee832"
+            ],
+            "index": "pypi",
+            "version": "==0.2.1"
         },
         "django-cors-headers": {
             "hashes": [
@@ -40,6 +47,12 @@
             "index": "pypi",
             "version": "==3.14.0"
         },
+        "django-fast-update": {
+            "hashes": [
+                "sha256:1fb4e08a89e9b3ad299627e3b3bd34848d0bc29f9d5b648793a93866d0d379c3"
+            ],
+            "version": "==0.2.1"
+        },
         "django-filter": {
             "hashes": [
                 "sha256:dee5dcf2cea4d7f767e271b6d01f767fce7500676d5e5dc58dac8154000b87df",
@@ -47,6 +60,14 @@
             ],
             "index": "pypi",
             "version": "==23.1"
+        },
+        "django-mysql": {
+            "hashes": [
+                "sha256:2d43172fd671825bce5fb5f928476d400900ea0f36ed26c24f7fe549ad7df61b",
+                "sha256:6e86850b050e9350355d94f5272c2a010794a2e5f4819cf0128cdb438bb3f704"
+            ],
+            "index": "pypi",
+            "version": "==4.9.0"
         },
         "djangorestframework": {
             "hashes": [
@@ -63,6 +84,14 @@
             ],
             "index": "pypi",
             "version": "==5.2.2"
+        },
+        "drf-nested-routers": {
+            "hashes": [
+                "sha256:01aa556b8c08608bb74fb34f6ca065a5183f2cda4dc0478192cc17a2581d71b0",
+                "sha256:996b77f3f4dfaf64569e7b8f04e3919945f90f95366838ca5b8bed9dd709d6c5"
+            ],
+            "index": "pypi",
+            "version": "==0.93.4"
         },
         "mysqlclient": {
             "hashes": [
@@ -171,6 +200,14 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==0.4.3"
+        },
+        "typing-extensions": {
+            "hashes": [
+                "sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb",
+                "sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==4.5.0"
         },
         "tzdata": {
             "hashes": [
