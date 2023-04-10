@@ -13,18 +13,25 @@ class CustomerSerializer(serializers.ModelSerializer):
     # Serializer for the customer field in the Comment model
     class Meta:
         model = Customer
-        fields = ("first_name", "last_name", "profile_picture")
-         
+        fields = ("id", "first_name", "last_name", "profile_picture")
+        # read_only_fields = ("first_name", "last_name", "profile_picture")
+        # lookup_field = "id"
 class CommentSerializer(serializers.ModelSerializer):
     #returns the customer's Identity(fullname and photo) and the comment body and date for each comment.
     customer = CustomerSerializer()
     class Meta:
         model = Comment
         fields = "__all__"
-        
+class CommentSerializerOnPOST(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        exlude = ("created_at",)
+    
         
 class BarberWithCommentsSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many = True)
+    # comments = serializers.PrimaryKeyRelatedField(many=True)
     class Meta:
         model = BarberModel_Auth
         fields =['BarberShop','Owner','phone_Number','address', "comments"]
