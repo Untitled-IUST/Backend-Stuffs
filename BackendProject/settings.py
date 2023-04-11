@@ -85,11 +85,13 @@ WSGI_APPLICATION = "BackendProject.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tahlil_project',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': 'amirmysql2023'
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'tahlil_project',
+        # 'HOST': 'localhost',
+        # 'USER': 'root',
+        # 'PASSWORD': 'ferz2020'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
