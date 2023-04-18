@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Barber,Rate
+from .models import Barber,Rate, Comment
+from Customer.serializers import CustomerOnCommentSerializer
 from Auth.serializer import UserSerializer
 
 
@@ -14,12 +15,18 @@ from Auth.serializer import UserSerializer
 #         model = BarberShopImages
 #         fields = ['background','logo']
 
+class CommentSerializer(serializers.ModelSerializer):
+    customer = CustomerOnCommentSerializer()
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        exclude = ("created_at")
 
 class BarberSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True,)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo']
-
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments']
 
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()

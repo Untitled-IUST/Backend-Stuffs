@@ -6,10 +6,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
-from .models import Barber,Rate
+from .models import Barber,Rate, Comment
+from Customer.models import Customer
 from Auth.models import User
 from Auth.serializer import UserSerializer
-from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer
+from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer, CommentSerializer
 from .filters import BarberRateFilter
 from rest_framework.permissions import IsAuthenticated
 
@@ -24,7 +25,16 @@ class BarberView(ModelViewSet):
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
     # permission_classes = [IsAuthenticated]
-
+    @action(methods=("PUT", "PATCH",), permission_classes=(IsAuthenticated,), detail=True)
+    def add_comment(self, request):
+        comment_author = Customer.objects.get(id= request.user.id)
+        comment_barber = self.get_object()
+        serializer = CommentSerializer
+        if serializer.is_valid():
+            text = serializer.data["body"]
+            parent_comment = serializer.data["parent"]
+            Comment.objects.create(customer=comment_author, barber=comment_barber,
+                                   body =text, parent_comment= parent_comment)
 
 
 class BarberProfileView(ModelViewSet):
@@ -47,7 +57,7 @@ class BarberProfileView(ModelViewSet):
             return Response(serializer.data)
         
 
-
+# class AddComment(mode)
 # class BarberBaseProfileView(ModelViewSet):
 #     queryset = User.objects.all()
 #     serializer_class = UserSerializer

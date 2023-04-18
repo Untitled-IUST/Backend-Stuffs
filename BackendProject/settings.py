@@ -87,10 +87,13 @@ WSGI_APPLICATION = "BackendProject.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'testTahlil',
+        'NAME': 'tahlil_project2',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'amirmysql2023'
+        'PASSWORD': 'ferz2020',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+            
     }
 }
 
@@ -154,3 +157,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# print ("base dir %s" % BASE_DIR + "*\n"*10)

@@ -26,3 +26,9 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
         user_serializer.save()
 
         return instance
+
+
+class CustomerOnCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['first_name','last_name','profile_pic']    

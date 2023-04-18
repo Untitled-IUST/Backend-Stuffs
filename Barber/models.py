@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from Auth.models import User
-
+from Customer.models import Customer 
   
 class Rate(models.Model):
   barbershop = models.ForeignKey('Barber',on_delete=models.SET_NULL,null=True,related_name='barbers')
@@ -26,5 +26,26 @@ class Barber(models.Model):
 #   background = models.ImageField(upload_to='Barber/backg')
 #   logo = models.ImageField(upload_to='Barber/Logo')
 
+class Comment(models.Model):
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
+  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+  body = models.TextField(max_length=1000, null=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
+  class Meta:
+    ordering = ['-created_at']
+    
+  def __str__(self):
+    return f'"{self.body}" By: {self.customer}'
+  
 
+  @property
+  def children(self):
+      return Comment.objects.filter(parent_comment=self).reverse()
+
+  @property
+  def is_parent(self):
+      if self.parent_comment is None:
+          return True
+      return False
 
