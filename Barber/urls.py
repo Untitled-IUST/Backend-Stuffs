@@ -11,6 +11,7 @@ router = routers.SimpleRouter()
 
 nestedRouter.register('info',views.BarberView,basename='info')
 router.register('profile',views.BarberProfileView,basename='profile')
+# nestedRouter.register("add_comment", views.)
 # router.register('baseprofile',views.BarberBaseProfileView,basename='Base-profile')
 # urlpatterns = [
 #             path('baseprofile/<int:pk>',views.BarberBaseProfileView.as_view()),
