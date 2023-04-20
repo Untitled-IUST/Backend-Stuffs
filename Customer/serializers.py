@@ -29,6 +29,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
 
 class CustomerOnCommentSerializer(serializers.ModelSerializer):
+    # full_name = serializers.CharField(read_only=True)
     class Meta:
         model = Customer
-        fields = ['first_name','last_name','profile_pic']    
+        fields = ["id",'full_name','profile_pic']    

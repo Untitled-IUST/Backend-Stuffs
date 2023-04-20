@@ -16,12 +16,12 @@ from Auth.serializer import UserSerializer
 #         fields = ['background','logo']
 
 class CommentSerializer(serializers.ModelSerializer):
-    customer = CustomerOnCommentSerializer
+    customer = CustomerOnCommentSerializer()
     replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
         fields = "__all__"
-        read_only_fields = ("id", "created_at", )
+        read_only_fields = ("id", "created_at","customer" )
         # exclude = ("created_at")
     def get_replies(self, obj):
         replies = obj.replies.all()
@@ -37,6 +37,7 @@ class BarberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Barber
         fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments',"comment_body"]
+        read_only_fields = ("id", "created_at" )
     def get_comments(self, obj):
         comments = obj.comments.all()
         serializer = CommentSerializer(comments, many=True, context=self.context)
