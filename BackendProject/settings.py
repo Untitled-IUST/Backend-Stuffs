@@ -30,8 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1", 
-    "localhost"  
-    'amirmohammadkomijani.pythonanywhere.com'
+    "localhost",  
+    'amirmohammadkomijani.pythonanywhere.com',
     ]
 
 

@@ -16,18 +16,31 @@ from Auth.serializer import UserSerializer
 #         fields = ['background','logo']
 
 class CommentSerializer(serializers.ModelSerializer):
-    customer = CustomerOnCommentSerializer()
+    customer = CustomerOnCommentSerializer
+    replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
         fields = "__all__"
-        exclude = ("created_at")
-
+        read_only_fields = ("id", "created_at", )
+        # exclude = ("created_at")
+    def get_replies(self, obj):
+        replies = obj.replies.all()
+        serializer = self.__class__(replies, many=True, context=self.context)
+        return serializer.data        
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user.customer
+        return super().create(validated_data)
+        
 class BarberSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True,)
+    comment_body = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments']
-
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments',"comment_body"]
+    def get_comments(self, obj):
+        comments = obj.comments.all()
+        serializer = CommentSerializer(comments, many=True, context=self.context)
+        return serializer.data
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():

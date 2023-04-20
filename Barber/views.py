@@ -35,7 +35,11 @@ class BarberView(ModelViewSet):
             parent_comment = serializer.data["parent"]
             Comment.objects.create(customer=comment_author, barber=comment_barber,
                                    body =text, parent_comment= parent_comment)
-
+    def post(self, request, *args, **kwargs):
+        serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        serializer.save(barber=self.get_object())
+        return self.retrieve(request, *args, **kwargs)
 
 class BarberProfileView(ModelViewSet):
     queryset = Barber.objects.all()
