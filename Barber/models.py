@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from Auth.models import User
-
+from Customer.models import Customer
   
 class Rate(models.Model):
   barbershop = models.ForeignKey('Barber',on_delete=models.SET_NULL,null=True,related_name='barbers')
@@ -18,6 +18,7 @@ class Barber(models.Model):
   area = models.CharField(max_length=255,null=False)
   address = models.CharField(max_length=255,null=False)
   rate = models.FloatField(default=1,null=False)
+  # rate_count = models.IntegerField(default=0,null=False)
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
   logo = models.ImageField(upload_to='Barber/Logo',null=False,default='default_profile.png')
 
@@ -51,18 +52,37 @@ class Service(models.Model):
   barber = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='services',null=False,unique=False)
   # catg = models.ForeignKey(Category,on_delete=models.CASCADE,null=True,related_name='services')
 
-
-
-
-
-
-
-
-
 # class BarberShopImages(models.Model):
 #   barbershop = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='images')
 #   background = models.ImageField(upload_to='Barber/backg')
 #   logo = models.ImageField(upload_to='Barber/Logo')
 
+class Comment(models.Model):
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
+  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+  body = models.TextField(max_length=1000, null=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
+  class Meta:
+    ordering = ['-created_at']
+    
+  def __str__(self):
+    return f'"{self.body}" By: {self.customer}'
+  @property
+  def children(self):
+      return Comment.objects.filter(parent_comment=self).reverse()
+  @property
+  def is_parent(self):
+      if self.parent_comment is None:
+          return True
 
+# class rate(models.Model):
+#   barbershop = models.ForeignKey('Barber',on_delete=models.SET_NULL,null=True,related_name='barbers')
+#   stars = models.IntegerField()
+# class Rating(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     rating = models.IntegerField()
+#     rated_object = models.ForeignKey(Barber, on_delete=models.CASCADE)
 
+    # class Meta:
+    #     unique_together = ('user', 'rated_object')

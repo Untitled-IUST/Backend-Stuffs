@@ -6,8 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
-from .models import Barber,Rate,Service
-from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer,ServiceSerializer,CreateServiceSerializer
+from Customer.models import Customer
+from .models import Barber,Rate,Service, Comment
+from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer,ServiceSerializer,CreateServiceSerializer, CommentSerializer
 from .filters import BarberRateFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -24,6 +25,21 @@ class BarberView(ModelViewSet):
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
     # permission_classes = [IsAuthenticated]
+    @action(methods=("PUT", "PATCH",), permission_classes=(IsAuthenticated,), detail=True)
+    def add_comment(self, request):
+        comment_author = Customer.objects.get(id= request.user.id)
+        comment_barber = self.get_object()
+        serializer = CommentSerializer
+        if serializer.is_valid():
+            text = serializer.data["body"]
+            parent_comment = serializer.data["parent"]
+            Comment.objects.create(customer=comment_author, barber=comment_barber,
+                                   body =text, parent_comment= parent_comment)
+    def post(self, request, *args, **kwargs):
+        serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        serializer.save(barber=self.get_object())
+        return self.retrieve(request, *args, **kwargs)
 
 
 class BarberProfileView(ModelViewSet):

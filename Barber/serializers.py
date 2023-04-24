@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Barber,Rate,Service
+from .models import Barber,Rate,Service, Comment
 from Auth.serializer import UserSerializer
-
+from Customer.serializers import CustomerOnCommentSerializer
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta():
@@ -62,15 +62,35 @@ class CreateServiceSerializer(serializers.ModelSerializer):
     #     return instance
 
 
-
+class CommentSerializer(serializers.ModelSerializer):
+    customer = CustomerOnCommentSerializer()
+    replies = serializers.SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ("id", "created_at","customer" )
+        # exclude = ("created_at")
+    def get_replies(self, obj):
+        replies = obj.replies.all()
+        serializer = self.__class__(replies, many=True, context=self.context)
+        return serializer.data        
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user.customer
+        return super().create(validated_data)
 
 
 class BarberSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True)
+    comments = CommentSerializer(many=True,)
+    comment_body = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','services']
-
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','services',"comments","comment_body"]
+        # read_only_fields = ("id", "created_at" )
+    def get_comments(self, obj):
+        comments = obj.comments.all()
+        serializer = CommentSerializer(comments, many=True, context=self.context)
+        return serializer.data
 
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
