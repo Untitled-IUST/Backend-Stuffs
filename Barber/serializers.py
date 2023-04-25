@@ -16,7 +16,7 @@ from Auth.serializer import UserSerializer
 #         fields = ['background','logo']
 
 class CommentSerializer(serializers.ModelSerializer):
-    customer = CustomerOnCommentSerializer()
+    customer = CustomerOnCommentSerializer(read_only = True)
     replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
@@ -32,16 +32,24 @@ class CommentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
         
 class BarberSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True,)
-    comment_body = serializers.CharField(write_only=True, required=False)
+    comments = CommentSerializer(many=True)
+    # comments = serializers.SerializerMethodField()
+    # rating = serializers.SerializerMethodField()
+    # comment_body = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments',"comment_body"]
-        read_only_fields = ("id", "created_at" )
-    def get_comments(self, obj):
-        comments = obj.comments.all()
-        serializer = CommentSerializer(comments, many=True, context=self.context)
-        return serializer.data
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments']# ,"comment_body", ]# "rating"]
+        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background','logo',"comments", "rate")
+    # def get_comments(self, obj):
+    #     comments = obj.comments.all()
+    #     serializer = CommentSerializer(comments, many=True, context=self.context)
+    #     return serializer.data  
+    # def get_rating(self, obj):
+    #     comments = obj.comments.all()
+    #     if comments:
+    #         ratings = [comment.rating for comment in comments]
+    #         return sum(ratings) / len(ratings)
+    #     return 0
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():

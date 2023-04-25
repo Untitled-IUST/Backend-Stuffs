@@ -13,7 +13,7 @@ from Auth.serializer import UserSerializer
 from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer, CommentSerializer
 from .filters import BarberRateFilter
 from rest_framework.permissions import IsAuthenticated
-
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -25,17 +25,44 @@ class BarberView(ModelViewSet):
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
     # permission_classes = [IsAuthenticated]
-    @action(methods=("PUT", "PATCH",), permission_classes=(IsAuthenticated,), detail=True)
-    def add_comment(self, request):
-        comment_author = Customer.objects.get(id= request.user.id)
-        comment_barber = self.get_object()
-        serializer = CommentSerializer
-        if serializer.is_valid():
-            text = serializer.data["body"]
-            parent_comment = serializer.data["parent"]
-            Comment.objects.create(customer=comment_author, barber=comment_barber,
-                                   body =text, parent_comment= parent_comment)
-    def post(self, request, *args, **kwargs):
+    # def retrieve(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance)
+    #     comments = Comment.objects.filter(barber=instance)
+    #     comment_serializer = CommentSerializer(comments, many=True)
+    #     return Response({
+    #         'barber': serializer.data,
+    #         'comments': comment_serializer.data,
+    #     })
+    # @action(methods=("PUT", "PATCH",), permission_classes=(IsAuthenticated,), detail=True)
+
+    # @action(methods=["POST",], permission_classes=[IsAuthenticated], detail=True)
+    # def add_comment(self, request):# *args, **kwargs):
+    #     comment_author = Customer.objects.get(id= request.user.id)
+        # comment_author = request.user.customer
+        # try:
+        #     # Get the current customer who is adding the comment
+        #     comment_author = Customer.objects.get(id=request.user.id)
+        # except ObjectDoesNotExist:
+        #     return Response({"error": "Customer matching query does not exist."}, status=404)
+
+        # comment_barber = self.get_object()
+        # serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
+        # serializer.is_valid(raise_exception=True)
+        # # serializer.save(barber=self.get_object())
+        # # return self.retrieve(request, *args, **kwargs)
+        # serializer.save(customer=comment_author, barber=comment_barber)
+        # return Response(serializer.data)        
+
+        # if serializer.is_valid():
+        #     text = serializer.data["body"]
+        #     parent_comment = serializer.data["parent"]
+        #     Comment.objects.create(customer=comment_author, barber=comment_barber,
+        #                            body =text, parent_comment= parent_comment)
+
+
+    @action(methods=["POST",], permission_classes=[IsAuthenticated], detail=True)
+    def add_coment(self, request, *args, **kwargs):
         serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         serializer.save(barber=self.get_object())

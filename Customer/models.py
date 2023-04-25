@@ -14,3 +14,5 @@ class Customer(models.Model):
         User, on_delete=models.CASCADE)
     def full_name(self):
         return str(self.first_name)+ " " +str(self.last_name)
+    def __str__(self) -> str:
+        return f"Customer No.{self.id}"
