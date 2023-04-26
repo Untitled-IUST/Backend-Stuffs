@@ -30,7 +30,23 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['customer'] = self.context['request'].user.customer
         return super().create(validated_data)
+
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    customer = serializers.ReadOnlyField(source='customer.id')
+    barber = serializers.ReadOnlyField(source='barber.id')
+
+    class Meta:
+        model = Rating
+        fields = "__all__"
+        read_only_fields = ("id", "created_at", "barber", "customer")
+        # exclude = ("created_at",)
         
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.save()
+        return instance
 class BarberSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True)
     rating = serializers.SerializerMethodField()
@@ -56,33 +72,25 @@ class BarberSerializer(serializers.ModelSerializer):
         ratings = obj.ratings.all()
         if ratings :
             ratings = [rating_instance.rating for rating_instance in ratings]
-            print(*ratings, sep = "\n")
+            # print(*ratings, sep = "\*n")
             return round(sum(ratings) / len(ratings), 2)
         else:
             return 3.33
     def get_customers_rate(self, obj):
         customer = self.context['request'].user.customer
+        # print(customer, sep = "*****\n")
         try:
-            rating = obj.ratings.get(customer=customer).first()
+            rating = obj.ratings.filter(customer=customer).order_by("-created_at").first()
             # rating = Rating.objects.get(customer= customer, barber = obj)
-            print(*rating, sep = "*****\n")
             return rating.rating
         except:
             return 3.33
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
-        fields = "__all__"
-        read_only_fields = ("id", "created_at", "barber", "customer")
-        # exclude = ("created_at",)
             
-    def create(self, validated_data):
-        validated_data['customer'] = self.context['request'].user.customer
-        return super().create(validated_data)
-    def update(self, instance, validated_data):
-        instance.rating = validated_data.get('rating', instance.rating)
-        instance.save()
-        return instance
+    # def create(self, validated_data):
+    #     validated_data['customer'] = self.context['request'].user.customer
+    #     return super().create(validated_data)
+    
+    
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():

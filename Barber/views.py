@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter,OrderingFilter
@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework import status
 from .models import Barber,Rate, Comment,Rating
 from Customer.models import Customer
 from Auth.models import User
@@ -67,20 +68,56 @@ class BarberView(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(barber=self.get_object())
         return self.retrieve(request, *args, **kwargs)
-    @action(methods=["POST","PUT"], permission_classes=[IsAuthenticated], detail=True)
-    def add_edit_rate(self, request, *args, **kwargs):
-        if request.method == "POST":
-                serializer = RatingSerializer(data=request.data, context=self.get_serializer_context())
+    
+    @action(methods=["POST"], permission_classes=[IsAuthenticated], detail=True)
+    def rate(self, request,pk=None, *args, **kwargs):
+        customer = request.user.customer
+        barber = get_object_or_404(Barber, pk=pk)
+        ratings = Rating.objects.filter(barber=barber, customer=customer)
+        if ratings.exists():
+            if ratings.count() > 1:
+                old_ratings = ratings.order_by('-created_at')[:len(ratings)-1]
+                # old_ratings.delete()
+                for old_rating in old_ratings:
+                    old_rating.delete()
+            rating =ratings.order_by('-created_at').first()
+            serializer =RatingSerializer(rating, data=request.data)
+        else :
+                serializer = RatingSerializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
-                serializer.save(barber=self.get_object())
-                return self.retrieve(request, *args, **kwargs)
-        elif request.method == "PUT":
-                rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer).first()
-                serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
-                return self.retrieve(request, *args, **kwargs)
+                serializer.save(customer=customer, barber=barber)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+        # if request.method == "POST":
+        #         serializer = RatingSerializer(data=request.data, context=self.get_serializer_context())
+        #         serializer.is_valid(raise_exception=True)
+        #         serializer.save(barber=self.get_object())
+        #         return self.retrieve(request, *args, **kwargs)
+        # elif request.method == "PUT":
+        #         rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer).first()
+        #         serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
+        #         serializer.is_valid(raise_exception=True)
+        #         serializer.save()
+        #         return self.retrieve(request, *args, **kwargs)
 
+
+        # customer = request.user.customer
+        # barber = self.get_object()
+
+        # try:
+        #     rating = barber.ratings.get(customer=customer)
+        #     serializer = RatingSerializer(rating, data=request.data)
+        # except Rating.DoesNotExist:
+        #     serializer = RatingSerializer(data=request.data)
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save(customer=customer, barber=barber)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     serializer.is_valid(raise_exception=True)
+        #     serializer.save()
+        #     return Response(serializer.data)
 class BarberProfileView(ModelViewSet):
     queryset = Barber.objects.all()
     serializer_class = BarberProfileSerializer
