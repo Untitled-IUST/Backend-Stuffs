@@ -21,7 +21,8 @@ class Barber(models.Model):
   rate = models.FloatField(default=1,null=False)
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
   logo = models.ImageField(upload_to='Barber/Logo',null=False,default='default_profile.png')
-
+  def __str__(self):
+    return f"Barber No.{self.pk}"
 
 # class BarberShopImages(models.Model):
 #   barbershop = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='images')
@@ -54,6 +55,9 @@ class Rating(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_ratings")
   rating = models.PositiveSmallIntegerField ( validators=[MinValueValidator(1), MaxValueValidator(5)], null=False, default=3)
   created_at = models.DateTimeField(auto_now_add=True)
-  # class Meta:
-  #   unique_together = ('barber', 'customer')
+  class Meta:
+    ordering = ['-created_at']
+    unique_together = ('barber', 'customer')
+  def __str__(self) -> str:
+     return f"{self.customer} Rates {self.barber}:({self.rating})"
     

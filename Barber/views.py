@@ -74,12 +74,12 @@ class BarberView(ModelViewSet):
                 serializer.is_valid(raise_exception=True)
                 serializer.save(barber=self.get_object())
                 return self.retrieve(request, *args, **kwargs)
-        # elif request.method == "PUT":
-        #         rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer)
-        #         serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
-        #         serializer.is_valid(raise_exception=True)
-        #         serializer.save()
-        #         return self.retrieve(request, *args, **kwargs)
+        elif request.method == "PUT":
+                rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer).first()
+                serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return self.retrieve(request, *args, **kwargs)
 
 class BarberProfileView(ModelViewSet):
     queryset = Barber.objects.all()
