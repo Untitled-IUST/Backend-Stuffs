@@ -12,3 +12,7 @@ class Customer(models.Model):
     profile_pic = models.ImageField(upload_to='customer/profile',null=False,default='default_profile.png')
     user = models.OneToOneField(
         User, on_delete=models.CASCADE)
+    def full_name(self):
+        return str(self.first_name)+ " " +str(self.last_name)
+    def __str__(self) -> str:
+        return f"Customer No.{self.id}"
