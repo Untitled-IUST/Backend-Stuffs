@@ -6,11 +6,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
-from .models import Barber,Rate, Comment
+from .models import Barber,Rate, Comment,Rating
 from Customer.models import Customer
 from Auth.models import User
 from Auth.serializer import UserSerializer
-from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer, CommentSerializer
+from .serializers import BarberSerializer,BarberProfileSerializer,RateSerializer, CommentSerializer, RatingSerializer
 from .filters import BarberRateFilter
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
@@ -67,6 +67,19 @@ class BarberView(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(barber=self.get_object())
         return self.retrieve(request, *args, **kwargs)
+    @action(methods=["POST","PUT"], permission_classes=[IsAuthenticated], detail=True)
+    def add_edit_rate(self, request, *args, **kwargs):
+        if request.method == "POST":
+                serializer = RatingSerializer(data=request.data, context=self.get_serializer_context())
+                serializer.is_valid(raise_exception=True)
+                serializer.save(barber=self.get_object())
+                return self.retrieve(request, *args, **kwargs)
+        # elif request.method == "PUT":
+        #         rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer)
+        #         serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
+        #         serializer.is_valid(raise_exception=True)
+        #         serializer.save()
+        #         return self.retrieve(request, *args, **kwargs)
 
 class BarberProfileView(ModelViewSet):
     queryset = Barber.objects.all()

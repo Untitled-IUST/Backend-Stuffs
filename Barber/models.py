@@ -22,6 +22,7 @@ class Barber(models.Model):
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
   logo = models.ImageField(upload_to='Barber/Logo',null=False,default='default_profile.png')
 
+
 # class BarberShopImages(models.Model):
 #   barbershop = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='images')
 #   background = models.ImageField(upload_to='Barber/backg')
@@ -47,3 +48,12 @@ class Comment(models.Model):
           return True
       return False
 
+
+class Rating(models.Model):
+  barber= models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="ratings")
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_ratings")
+  rating = models.PositiveSmallIntegerField ( validators=[MinValueValidator(1), MaxValueValidator(5)], null=False, default=3)
+  created_at = models.DateTimeField(auto_now_add=True)
+  # class Meta:
+  #   unique_together = ('barber', 'customer')
+    

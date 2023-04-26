@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Barber,Rate, Comment
+from .models import Barber,Rate, Comment, Rating
 from Customer.serializers import CustomerOnCommentSerializer
 from Auth.serializer import UserSerializer
 
@@ -33,13 +33,14 @@ class CommentSerializer(serializers.ModelSerializer):
         
 class BarberSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True)
+    rating = serializers.SerializerMethodField()
     # comments = serializers.SerializerMethodField()
     # rating = serializers.SerializerMethodField()
     # comment_body = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo', 'comments']# ,"comment_body", ]# "rating"]
-        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background','logo',"comments", "rate")
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate',"rating",'background','logo', 'comments', ]# ,"comment_body", ]# "rating"]
+        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background','logo',"comments", "rate", "rating")
     # def get_comments(self, obj):
     #     comments = obj.comments.all()
     #     serializer = CommentSerializer(comments, many=True, context=self.context)
@@ -50,6 +51,19 @@ class BarberSerializer(serializers.ModelSerializer):
     #         ratings = [comment.rating for comment in comments]
     #         return sum(ratings) / len(ratings)
     #     return 0
+    def get_rating(self,obj):
+        ratings = obj.ratings.all()
+        if ratings :
+            ratings = [rating_instance.rating for rating_instance in ratings]
+            return round(sum(ratings) / len(ratings), 2)
+        else:
+            return 3.33
+class RatingSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Rating
+            fields = "__all__"
+            read_only_fields = ("id", "created_at", "barber")
+            # exclude = ("created_at",)
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():
