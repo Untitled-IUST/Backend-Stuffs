@@ -60,17 +60,26 @@ class BarberSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True)
     comments = CommentSerializer(many=True)
     rating = serializers.SerializerMethodField()
+    rating_count = serializers.SerializerMethodField()
     customers_rate = serializers.SerializerMethodField()    
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','services',"rating","customers_rate","comments"]
-        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background','logo',"comments", "rate", "rating", "customers_rate")
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','services',
+                  "rating","rating_count", "customers_rate","comments"]
+        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background',
+                            'logo',"comments", "rate", "rating","rating_count", "customers_rate")
     def get_rating(self,obj):
         ratings = obj.ratings.all()
         if ratings :
             ratings = [rating_instance.rating for rating_instance in ratings]
-            # print(*ratings, sep = "\*n")
+            # print(*ratings, sep = "*\n")
             return round(sum(ratings) / len(ratings), 2)
+        else:
+            return 0
+    def get_rating_count(self,obj):
+        ratings = obj.ratings.all()
+        if ratings :
+            return len(ratings)
         else:
             return 0
     def get_customers_rate(self, obj):
