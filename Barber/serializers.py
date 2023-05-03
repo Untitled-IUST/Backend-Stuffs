@@ -1,19 +1,62 @@
 from rest_framework import serializers
-from .models import Barber,Rate, Comment, Rating
+from .models import Barber,Rate, Comment, Rating ,OrderServices,CategoryService,Category 
 from Customer.serializers import CustomerOnCommentSerializer
 from Auth.serializer import UserSerializer
+from Customer.serializers import CustomerSerializer
+from Customer.models import Customer
 
+class OrderServiceSerializer(serializers.ModelSerializer):
+    # service_id = serializers.PrimaryKeyRelatedField(source='service', queryset=Service.objects.all())
 
+    class Meta:
+        model = OrderServices
+        fields = ['id','service','barber', 'time','date','status']
 
-# class BarberShopImagesSerializer(serializers.ModelSerializer):
     
-#     def create(self, validated_data):
-#         barbershop_id = self.context['barbershop_id']
-#         return BarberShopImages.objects.create(barbershop_id=barbershop_id,**validated_data)
+    # def validate_time(self, barber_id):
+    #     if OrderServices.objects.filter(barber_id = barber_id):
+    #         if OrderServices.objects.only('time').exists():
+    #             raise ValueError('this time has been set')
     
-#     class Meta:
-#         model = BarberShopImages
-#         fields = ['background','logo']
+    
+    def save(self, **kwargs):
+        customer, created = Customer.objects.get_or_create(user_id=self.context['user_id'])
+        # barber, created = Barber.objects.get_or_create(id=self.context['barber_id'])
+        # service, created = Service.objects.get_or_create(id=self.context['service_id'])
+        # self.validated_data.update({'customer': customer,'barber':barber,'service':service, **kwargs})
+        self.validated_data.update({'customer':customer,**kwargs})
+        order = OrderServices.objects.create(**self.validated_data)
+        return order
+
+
+class CategoryServiceSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = CategoryService
+        fields = ['id','service','price','servicePic']
+    
+    def save(self, **kwargs):
+        (category,created) = Category.objects.get_or_create(id = self.context['category_id'])
+        self.validated_data.update({'category':category,**kwargs})
+        service = CategoryService.objects.create(**self.validated_data)
+        return service
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    categoryServices = CategoryServiceSerializer(many=True,read_only=True)
+    class Meta():
+        model = Category
+        fields = ['id','category','categoryServices']
+    
+    def update(self, instance, validated_data):
+        instance.category = validated_data.get('category',instance.category)
+        instance.save()
+        return instance
+    
+    def save(self, **kwargs):
+        (barber,created) = Barber.objects.get_or_create(id=self.context['barber_id'])
+        self.validated_data.update({'barber':barber,**kwargs})
+        catg = Category.objects.create(**self.validated_data)
+        return catg
 
 class CommentSerializer(serializers.ModelSerializer):
     customer = CustomerOnCommentSerializer(read_only = True)
@@ -91,6 +134,13 @@ class BarberSerializer(serializers.ModelSerializer):
     #     return super().create(validated_data)
     
     
+    # services = ServiceSerializer(many=True)
+    categories = CategorySerializer(many=True)
+    class Meta:
+        model = Barber
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','categories']
+
+
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():
@@ -118,12 +168,21 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
+class BarberAreasSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Barber
+        fields = ['area']
 
 
 class RateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rate
         fields = ['barbershop','stars']
+
+
+
+
+    
 
 
 

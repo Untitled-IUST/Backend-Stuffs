@@ -16,37 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `django_admin_log`
+-- Table structure for table `barber_service`
 --
 
-DROP TABLE IF EXISTS `django_admin_log`;
+DROP TABLE IF EXISTS `barber_service`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `django_admin_log` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `action_time` datetime(6) NOT NULL,
-  `object_id` longtext,
-  `object_repr` varchar(200) NOT NULL,
-  `action_flag` smallint unsigned NOT NULL,
-  `change_message` longtext NOT NULL,
-  `content_type_id` int DEFAULT NULL,
-  `user_id` int NOT NULL,
+CREATE TABLE `barber_service` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `service` varchar(255) NOT NULL,
+  `price` double NOT NULL,
+  `service_pic` varchar(100) DEFAULT NULL,
+  `category` varchar(20) NOT NULL,
+  `barber_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
-  KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`),
-  CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
-  CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `Barber_service_barber_id_15476d75_fk_Barber_barber_id` (`barber_id`),
+  CONSTRAINT `Barber_service_barber_id_15476d75_fk_Barber_barber_id` FOREIGN KEY (`barber_id`) REFERENCES `barber_barber` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `django_admin_log`
+-- Dumping data for table `barber_service`
 --
 
-LOCK TABLES `django_admin_log` WRITE;
-/*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
-/*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
+LOCK TABLES `barber_service` WRITE;
+/*!40000 ALTER TABLE `barber_service` DISABLE KEYS */;
+INSERT INTO `barber_service` VALUES (1,'hair dress',10,NULL,'hair',1),(17,'nail service',25,'','nail',1),(19,'make up',14,'','makeup',1);
+/*!40000 ALTER TABLE `barber_service` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -58,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-17 16:34:16
+-- Dump completed on 2023-04-25 14:11:19

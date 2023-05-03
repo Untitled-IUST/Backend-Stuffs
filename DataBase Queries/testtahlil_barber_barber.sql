@@ -31,16 +31,16 @@ CREATE TABLE `barber_barber` (
   `address` varchar(255) NOT NULL,
   `rate` double NOT NULL,
   `user_id` int NOT NULL,
-  `area` varchar(255) NOT NULL DEFAULT 'areax',
-  `background` varchar(100) NOT NULL DEFAULT 'default_profile.png',
-  `logo` varchar(100) NOT NULL DEFAULT 'default_profile.png',
+  `area` varchar(255) NOT NULL,
+  `background` varchar(100) NOT NULL,
+  `logo` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Parvaneh` (`Parvaneh`),
   UNIQUE KEY `phone_Number` (`phone_Number`),
   UNIQUE KEY `Barber_barber_BarberShop_db673b7d_uniq` (`BarberShop`),
   KEY `Barber_barber_user_id_70914d2d` (`user_id`),
-  CONSTRAINT `Barber_barber_user_id_70914d2d_fk_Auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `Barber_barber_user_id_70914d2d_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-22 20:06:54
+-- Dump completed on 2023-04-25 14:11:19

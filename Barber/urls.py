@@ -11,19 +11,18 @@ router = routers.SimpleRouter()
 
 nestedRouter.register('info',views.BarberView,basename='info')
 router.register('profile',views.BarberProfileView,basename='profile')
-# nestedRouter.register("add_comment", views.)
-# router.register('baseprofile',views.BarberBaseProfileView,basename='Base-profile')
-# urlpatterns = [
-#             path('baseprofile/<int:pk>',views.BarberBaseProfileView.as_view()),
-#             #path('baseprofile/<int:pk>',views.BarberBaseProfileView.as_view()),
-# ]
-# urlpatterns = [
-#         path('baseprofile/',views.BarberBaseProfileView.as_view()),
-# ]
+# router.register('category',views.addCategory)
+# router.register('service',views.addService,basename='add service')
+router.register('area',views.Areas,basename='show areas')
+router.register('order',views.OrderServiceView,basename='order')
 
-barber_info = nested.NestedDefaultRouter(nestedRouter,'info',lookup='barbershop')
 
-# barber_router.register('images',views.BarberShopImagesView,basename='images')
 
-urlpatterns = router.urls + barber_info.urls + nestedRouter.urls
+nestedRouter.register('categories', views.addCategoryView, basename='categories')
+service_router = nested.NestedSimpleRouter(nestedRouter, 'categories', lookup='category')
+service_router.register('service', views.addCategoryServiceView, basename='services')
+
+
+
+urlpatterns = router.urls + nestedRouter.urls + service_router.urls
 
