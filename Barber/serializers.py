@@ -118,28 +118,6 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
-    # def update(self,instance , validated_data):
-        
-    #     categories_data = validated_data.pop('categories')
-    #     categories = instance.categories
-    #     cate = []
-    #     for data in categories_data:
-    #         cate.append(models.Category.objects.get(name=data["name"]))
-    #     categories.set(cate)
-
-    #     instance.title = validated_data.get('title' , instance.title)
-    #     instance.room_type = validated_data.get("room_type" , instance.room_type)
-    #     instance.link = validated_data.get('link' , instance.link)
-    #     instance.password = validated_data.get('password' , instance.password)
-    #     instance.description = validated_data.get('description' , instance.description)
-    #     instance.start_date = validated_data.get('start_date' , instance.start_date)
-    #     instance.end_date = validated_data.get('end_date' , instance.end_date)
-    #     instance.maximum_member_count = validated_data.get('maximum_member_count' , instance.maximum_member_count)
-    #     instance.open_status = validated_data.get("open_status" , instance.open_status)
-        
-    #     instance.save()
-        
-    #     return instance
 
 
 class RateSerializer(serializers.ModelSerializer):

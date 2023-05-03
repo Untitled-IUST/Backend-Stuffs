@@ -25,42 +25,6 @@ class BarberView(ModelViewSet):
     filterset_class = BarberRateFilter
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
-    # permission_classes = [IsAuthenticated]
-    # def retrieve(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance)
-    #     comments = Comment.objects.filter(barber=instance)
-    #     comment_serializer = CommentSerializer(comments, many=True)
-    #     return Response({
-    #         'barber': serializer.data,
-    #         'comments': comment_serializer.data,
-    #     })
-    # @action(methods=("PUT", "PATCH",), permission_classes=(IsAuthenticated,), detail=True)
-
-    # @action(methods=["POST",], permission_classes=[IsAuthenticated], detail=True)
-    # def add_comment(self, request):# *args, **kwargs):
-    #     comment_author = Customer.objects.get(id= request.user.id)
-        # comment_author = request.user.customer
-        # try:
-        #     # Get the current customer who is adding the comment
-        #     comment_author = Customer.objects.get(id=request.user.id)
-        # except ObjectDoesNotExist:
-        #     return Response({"error": "Customer matching query does not exist."}, status=404)
-
-        # comment_barber = self.get_object()
-        # serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
-        # serializer.is_valid(raise_exception=True)
-        # # serializer.save(barber=self.get_object())
-        # # return self.retrieve(request, *args, **kwargs)
-        # serializer.save(customer=comment_author, barber=comment_barber)
-        # return Response(serializer.data)        
-
-        # if serializer.is_valid():
-        #     text = serializer.data["body"]
-        #     parent_comment = serializer.data["parent"]
-        #     Comment.objects.create(customer=comment_author, barber=comment_barber,
-        #                            body =text, parent_comment= parent_comment)
-
 
     @action(methods=["POST",], permission_classes=[IsAuthenticated], detail=True)
     def add_coment(self, request, *args, **kwargs):
@@ -71,53 +35,31 @@ class BarberView(ModelViewSet):
     
     @action(methods=["POST"], permission_classes=[IsAuthenticated], detail=True)
     def rate(self, request,pk=None, *args, **kwargs):
+        # Get all ratings for the specified barber and customer
         customer = request.user.customer
         barber = get_object_or_404(Barber, pk=pk)
         ratings = Rating.objects.filter(barber=barber, customer=customer)
         if ratings.exists():
+            # If there are multiple ratings, delete all but the most recent one
             if ratings.count() > 1:
                 old_ratings = ratings.order_by('-created_at')[:len(ratings)-1]
                 # old_ratings.delete()
                 for old_rating in old_ratings:
                     old_rating.delete()
+            # Update the most recent rating with the new rating value
             rating =ratings.order_by('-created_at').first()
             serializer =RatingSerializer(rating, data=request.data)
         else :
+                # If there are no ratings, create a new rating            
                 serializer = RatingSerializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save(customer=customer, barber=barber)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Save the updated rating
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-        # if request.method == "POST":
-        #         serializer = RatingSerializer(data=request.data, context=self.get_serializer_context())
-        #         serializer.is_valid(raise_exception=True)
-        #         serializer.save(barber=self.get_object())
-        #         return self.retrieve(request, *args, **kwargs)
-        # elif request.method == "PUT":
-        #         rate = Rating.objects.get(barber=self.get_object(), customer=request.user.customer).first()
-        #         serializer = RatingSerializer(rating=rate, data=request.data, context=self.get_serializer_context())
-        #         serializer.is_valid(raise_exception=True)
-        #         serializer.save()
-        #         return self.retrieve(request, *args, **kwargs)
 
-
-        # customer = request.user.customer
-        # barber = self.get_object()
-
-        # try:
-        #     rating = barber.ratings.get(customer=customer)
-        #     serializer = RatingSerializer(rating, data=request.data)
-        # except Rating.DoesNotExist:
-        #     serializer = RatingSerializer(data=request.data)
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save(customer=customer, barber=barber)
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # else:
-        #     serializer.is_valid(raise_exception=True)
-        #     serializer.save()
-        #     return Response(serializer.data)
 class BarberProfileView(ModelViewSet):
     queryset = Barber.objects.all()
     serializer_class = BarberProfileSerializer
@@ -137,110 +79,6 @@ class BarberProfileView(ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         
-
-# class AddComment(mode)
-# class BarberBaseProfileView(ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     # permission_classes = [IsAuthenticated]
-
-#     @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
-#     def me(self, request):
-#         (user, created) = User.objects.get_or_create(
-#             id=request.user.id)
-#         # baseInfo = User.objects.prefetch_related('user_set').all()
-#         if request.method == 'GET':
-#             serializer = UserSerializer(user)
-#             return Response(serializer.data)
-#         elif request.method == 'PUT':
-#             serializer = UserSerializer(user, data=request.data)
-#             serializer.is_valid(raise_exception=True)
-#             serializer.save()
-#             return Response(serializer.data)
-
-
-
-# class BarberBaseProfileView(APIView):
-#     def get(self,request):
-#         queryset = User.objects.get(pk=request.user.id)
-#         serializer = UserSerializer(queryset)
-#         return Response(serializer.data)
-
-#     def put(self,request):
-#         user = User.objects.get(pk=request.user.id)
-#         serializer = UserSerializer(user,data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data)
-
-# class BarberBaseProfileView(RetrieveUpdateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     # lookup_fields = ['email', 'username']
-        
-
-# class BarberBaseProfileView(ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = [IsAuthenticated]
-
-    # def get_queryset(self):
-    #     return User.objects.prefetch_related('barber').all()
-
-
-
-
-
-
-
-# class BarberBaseProfileView(ModelViewSet):
-#     queryset = User.objects.prefetch_related('barber').all()
-#     serializer_class = UserSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
-#     def me(self, request):
-#         (barber, created) = User.objects.get(
-#             barber=request.user.id)
-#         # baseInfo = User.objects.prefetch_related('barber_set').all()
-#         if request.method == 'GET':
-#             serializer = UserSerializer(barber)
-#             return Response(serializer.data)
-#         elif request.method == 'PUT':
-#             serializer = UserSerializer(barber, data=request.data)
-#             serializer.is_valid(raise_exception=True)
-#             serializer.save()
-#             return Response(serializer.data)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class BarberShopImagesView(ModelViewSet):
-#     serializer_class = BarberShopImagesSerializer
-
-#     def get_serializer_context(self):
-#         return {'barbershop_id':self.kwargs['barbershop_pk']}
-
-#     def get_queryset(self):
-#         return BarberShopImages.objects.filter(barbershop_id=self.kwargs['barbershop_pk'])
-
-
-
-# class BarberView(ModelViewSet):
-#     queryset = Barber.objects.all()
-#     serializer_class = BarberSerializer
-
 
 class RateView(ModelViewSet):
     queryset = Rate.objects.all()

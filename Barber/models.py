@@ -24,10 +24,6 @@ class Barber(models.Model):
   def __str__(self):
     return f"Barber No.{self.pk}"
 
-# class BarberShopImages(models.Model):
-#   barbershop = models.ForeignKey(Barber,on_delete=models.CASCADE,related_name='images')
-#   background = models.ImageField(upload_to='Barber/backg')
-#   logo = models.ImageField(upload_to='Barber/Logo')
 
 class Comment(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
