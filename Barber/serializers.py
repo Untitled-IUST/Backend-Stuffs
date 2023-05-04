@@ -92,25 +92,28 @@ class RatingSerializer(serializers.ModelSerializer):
         return instance
 class BarberSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField(source= "get_rating")
     customers_rate = serializers.SerializerMethodField()
     # comments = serializers.SerializerMethodField()
     # rating = serializers.SerializerMethodField()
     # comment_body = serializers.CharField(write_only=True, required=False)
+    categories = CategorySerializer(many=True)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate',"rating","customers_rate", 'background','logo', 'comments', ]# ,"comment_body", ]# "rating"]
-        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,'background','logo',"comments", "rate", "rating", "customers_rate")
-    # def get_comments(self, obj):
-    #     comments = obj.comments.all()
-    #     serializer = CommentSerializer(comments, many=True, context=self.context)
-    #     return serializer.data  
-    # def get_rating(self, obj):
-    #     comments = obj.comments.all()
-    #     if comments:
-    #         ratings = [comment.rating for comment in comments]
-    #         return sum(ratings) / len(ratings)
-    #     return 0
+        fields = ('id','BarberShop','Owner','phone_Number','area','address','rate', "rating",
+                  "customers_rate", 'background','logo', 'comments',"categories" )# ,"comment_body", ]# "rating"]
+        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,
+                            'background','logo',"comments", "rate", "rating", "customers_rate")
+    def get_comments(self, obj):
+        comments = obj.comments.all()
+        serializer = CommentSerializer(comments, many=True, context=self.context)
+        return serializer.data  
+    def get_rating(self, obj):
+        comments = obj.comments.all()
+        if comments:
+            ratings = [comment.rating for comment in comments]
+            return sum(ratings) / len(ratings)
+        return 0
     def get_rating(self,obj):
         ratings = obj.ratings.all()
         if ratings :
@@ -135,11 +138,6 @@ class BarberSerializer(serializers.ModelSerializer):
     
     
     # services = ServiceSerializer(many=True)
-    categories = CategorySerializer(many=True)
-    class Meta:
-        model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','categories']
-
 
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from decimal import Decimal
 from rest_framework.generics import RetrieveUpdateAPIView 
 from .models import Customer
 from .serializers import CustomerProfileSerializer,Customers
@@ -25,4 +26,9 @@ class CustomerProfileView(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
-
+    @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="add_credits", url_name="add_credits")
+    def add_credits(self, request):
+        customer= Customer.objects.get(user_id=request.user.id)
+        customer.credit += Decimal(request.data['credit'])
+        customer.save()
+        return Response({"credit":customer.credit})

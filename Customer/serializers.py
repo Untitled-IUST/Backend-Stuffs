@@ -66,3 +66,5 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['first_name','last_name']
+class CustomerAddCreditSerializer(serializers.Serializer):
+    credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
