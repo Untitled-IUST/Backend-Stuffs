@@ -29,13 +29,20 @@ class CustomerProfileView(ModelViewSet):
     @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="add_credits", url_name="add_credits")
     def add_credits(self, request):
         customer= Customer.objects.get(user_id=request.user.id)
-        customer.credit += Decimal(request.data['credit'])
+        credit = Decimal(request.data['credit'])
+        if credit < 0:
+            return Response({"error": "Credit cannot be negative"})        
+        customer.credit += credit
         customer.save()
         return Response({"credit":customer.credit})
-    @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="add_credits", url_name="decrease_credit")
+    @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="decrease_credit", url_name="decrease_credit")
     def decrease_credit(self, request):
         customer= Customer.objects.get(user_id=request.user.id)
-        customer.credit -= Decimal(request.data['credit'])
-        
+        credit = Decimal(request.data['credit'])
+        if credit < 0:
+            return Response({"error": "Credit cannot be negative"})
+        if customer.credit < credit:
+            return Response({"error": "Insufficient credit"})
+        customer.credit -= credit
         customer.save()
         return Response({"credit":customer.credit})

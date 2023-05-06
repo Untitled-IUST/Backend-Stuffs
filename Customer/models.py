@@ -12,7 +12,7 @@ class Customer(models.Model):
     phone_Number = models.CharField(max_length=11,unique=True,null=True)
     profile_pic = models.ImageField(upload_to='customer/profile',null=False,default='default_profile.png')
     credit = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
-                                 validators=(MinValueValidator(limit_value=0.00, message="credit cannot be below 0."), ))
+                                 validators=(MinValueValidator(0.00), ))
     user = models.OneToOneField(
         User, on_delete=models.CASCADE)
     def full_name(self):
