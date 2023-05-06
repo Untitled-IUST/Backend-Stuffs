@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from Auth.models import User
+from django.core.validators import MinValueValidator
 # from ..Auth.models import Customer
 # Create your models here.
 
@@ -10,7 +11,8 @@ class Customer(models.Model):
     area = models.CharField(max_length=255)
     phone_Number = models.CharField(max_length=11,unique=True,null=True)
     profile_pic = models.ImageField(upload_to='customer/profile',null=False,default='default_profile.png')
-    credit = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True)
+    credit = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
+                                 validators=(MinValueValidator(limit_value=0.00, message="credit cannot be below 0."), ))
     user = models.OneToOneField(
         User, on_delete=models.CASCADE)
     def full_name(self):

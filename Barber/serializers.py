@@ -121,7 +121,7 @@ class BarberSerializer(serializers.ModelSerializer):
             # print(*ratings, sep = "\*n")
             return round(sum(ratings) / len(ratings), 2)
         else:
-            return 3.33
+            return 0.00
     def get_customers_rate(self, obj):
         customer = self.context['request'].user.customer
         # print(customer, sep = "*****\n")
@@ -130,7 +130,7 @@ class BarberSerializer(serializers.ModelSerializer):
             # rating = Rating.objects.get(customer= customer, barber = obj)
             return rating.rating
         except:
-            return 3.33
+            return None
             
     # def create(self, validated_data):
     #     validated_data['customer'] = self.context['request'].user.customer

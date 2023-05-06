@@ -32,3 +32,10 @@ class CustomerProfileView(ModelViewSet):
         customer.credit += Decimal(request.data['credit'])
         customer.save()
         return Response({"credit":customer.credit})
+    @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="add_credits", url_name="decrease_credit")
+    def decrease_credit(self, request):
+        customer= Customer.objects.get(user_id=request.user.id)
+        customer.credit -= Decimal(request.data['credit'])
+        
+        customer.save()
+        return Response({"credit":customer.credit})
