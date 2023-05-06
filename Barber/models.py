@@ -130,3 +130,20 @@ class Rating(models.Model):
   def __str__(self) -> str:
      return f"{self.customer} Rates {self.barber}:({self.rating})"
     
+    
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('C', 'Credit'),
+        ('O', 'Order'),
+    )
+
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="transactionCustomer")
+    transaction_type =  models.CharField(max_length=1, choices=TRANSACTION_TYPES, default='C')
+    amount = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
+                                 validators=(MinValueValidator(0.00), ))
+    timestamp = models.DateTimeField(auto_now_add=True, null=True,  blank=True)
+    order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
+    class Meta:
+        ordering = ['-timestamp',]
+    def __str__(self) -> str:
+        return f"{self.customer} Has {self.amount} Toman on {self.timestamp}"

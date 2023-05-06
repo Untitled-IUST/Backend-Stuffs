@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Barber,Rate, Comment, Rating ,OrderServices,CategoryService,Category 
+from .models import Barber,Rate, Comment, Rating ,OrderServices,\
+                    CategoryService,Category, Transaction
 from Customer.serializers import CustomerOnCommentSerializer
 from Auth.serializer import UserSerializer
 from Customer.serializers import CustomerSerializer
@@ -26,6 +27,7 @@ class OrderServiceSerializer(serializers.ModelSerializer):
         # self.validated_data.update({'customer': customer,'barber':barber,'service':service, **kwargs})
         self.validated_data.update({'customer':customer,**kwargs})
         order = OrderServices.objects.create(**self.validated_data)
+        # transaction = Transaction.objects.create(customer=customer, transaction_type='O', amount=order.service.price, order=order)
         return order
 
 
