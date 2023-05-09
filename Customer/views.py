@@ -2,6 +2,7 @@ from django.shortcuts import render
 from decimal import Decimal
 from rest_framework.generics import RetrieveUpdateAPIView 
 from .models import Customer
+from Barber.models import Transaction
 from .serializers import CustomerProfileSerializer,Customers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -32,8 +33,11 @@ class CustomerProfileView(ModelViewSet):
         credit = Decimal(request.data['credit'])
         if credit < 0:
             return Response({"error": "Credit cannot be negative"})        
+        Transaction.objects.create(customer=customer, transaction_type='C', amount=credit)
         customer.credit += credit
         customer.save()
+        
+        
         return Response({"credit":customer.credit})
     @action(detail=False, methods=['POST'], permission_classes=[IsAuthenticated],url_path="decrease_credit", url_name="decrease_credit")
     def decrease_credit(self, request):

@@ -31,7 +31,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Customer
-        fields = ['first_name','last_name','phone_Number','area','profile_pic','user']
+        fields = ['first_name','last_name','phone_Number','area','profile_pic','user', "credit"]
 
 
     def to_representation(self, instance):

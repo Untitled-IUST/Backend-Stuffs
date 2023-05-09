@@ -27,7 +27,7 @@ class OrderServiceSerializer(serializers.ModelSerializer):
         # self.validated_data.update({'customer': customer,'barber':barber,'service':service, **kwargs})
         self.validated_data.update({'customer':customer,**kwargs})
         order = OrderServices.objects.create(**self.validated_data)
-        # transaction = Transaction.objects.create(customer=customer, transaction_type='O', amount=order.service.price, order=order)
+        Transaction.objects.create(customer=customer, transaction_type='O', amount=order.service.price, service = order.service)
         return order
 
 

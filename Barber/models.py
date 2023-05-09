@@ -133,7 +133,7 @@ class Rating(models.Model):
     
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
-        ('C', 'Credit'),
+        ('C', 'Charge'),
         ('O', 'Order'),
     )
 
@@ -142,7 +142,8 @@ class Transaction(models.Model):
     amount = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
                                  validators=(MinValueValidator(0.00), ))
     timestamp = models.DateTimeField(auto_now_add=True, null=True,  blank=True)
-    order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
+    # order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=True, blank=True )
     class Meta:
         ordering = ['-timestamp',]
     def __str__(self) -> str:
