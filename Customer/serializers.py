@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Customer
+from Barber.models import Transaction
 from Auth.serializer import UserSerializer
 
 
@@ -68,3 +69,11 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ['first_name','last_name']
 class CustomerAddCreditSerializer(serializers.Serializer):
     credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
+
+class TransactionSerializer(serializers.ModelSerializer):
+    # service = 
+    class Meta:
+        model = Transaction
+        fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        read_only_fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        # fields = "__all__" 

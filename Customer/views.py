@@ -3,11 +3,13 @@ from decimal import Decimal
 from rest_framework.generics import RetrieveUpdateAPIView 
 from .models import Customer
 from Barber.models import Transaction
-from .serializers import CustomerProfileSerializer,Customers
+from .serializers import CustomerProfileSerializer,Customers, TransactionSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 # Create your views here.
 
 class CustomerProfileView(ModelViewSet):
@@ -50,3 +52,21 @@ class CustomerProfileView(ModelViewSet):
         customer.credit -= credit
         customer.save()
         return Response({"credit":customer.credit})
+    
+
+class TransactionsView(RetrieveAPIView):
+    # @action(detail=False, methods=("GET",), permission_classes=(IsAuthenticated,), url_path="transactions", url_name="transactions" )
+    # def transactions(self, request):
+    # customer= Customer.objects.get(user_id=request.user.id)
+    queryset = Transaction.objects.all()
+
+    serializer_class = TransactionSerializer()
+    # return Response(serializer.data)
+    
+
+class CustomerTransactionView(APIView):
+    def get(self, request):
+        customer = Customer.objects.get(user_id=request.user.id, )
+        transactions = Transaction.objects.filter(customer_id=customer)
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
