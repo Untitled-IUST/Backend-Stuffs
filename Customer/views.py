@@ -41,8 +41,7 @@ class CustomerProfileView(ModelViewSet):
             customer.save()
         serializer = CustomerOnCommentSerializer(customer)
         return Response(serializer.data)
-        
-        return Response({"credit":customer.credit})
+        # return Response({"credit":customer.credit})
     @action(detail=False, methods=['PUT'], permission_classes=[IsAuthenticated],url_path="decrease_credit", url_name="decrease_credit")
     def decrease_credit(self, request):
         customer= Customer.objects.get(user_id=request.user.id)

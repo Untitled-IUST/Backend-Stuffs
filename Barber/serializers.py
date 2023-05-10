@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import datetime
 from rest_framework import serializers
 from .models import Barber,Rate, Comment, Rating ,OrderServices,\
                     CategoryService,Category, Transaction
@@ -26,8 +28,18 @@ class OrderServiceSerializer(serializers.ModelSerializer):
         # service, created = Service.objects.get_or_create(id=self.context['service_id'])
         # self.validated_data.update({'customer': customer,'barber':barber,'service':service, **kwargs})
         self.validated_data.update({'customer':customer,**kwargs})
+        if self.validated_data["status"] == "paid" :#and customer.credit >= order.service.price:
+            # print("@@@hora1")
+            order_date =self.validated_data['date']
+            order_time = self.validated_data['time']
+            naive_datetime = datetime.combine(order_date, order_time,)
+            aware_datetime = timezone.make_aware(naive_datetime)
+            # date_and_time = datetime.combine(date=order_date,time= order_time, tzinfo=None)
+            service = self.validated_data['service']
+            trans = Transaction.objects.create(customer=customer, transaction_type='O',timestamp = aware_datetime ,
+                                        amount=service.price, service = service)
+            # print("****hora2")
         order = OrderServices.objects.create(**self.validated_data)
-        Transaction.objects.create(customer=customer, transaction_type='O', amount=order.service.price, service = order.service)
         return order
 
 
