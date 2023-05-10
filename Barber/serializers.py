@@ -180,9 +180,3 @@ class RateSerializer(serializers.ModelSerializer):
         fields = ['barbershop','stars']
 
 
-
-
-    
-
-
-

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Customer
 from Barber.models import Transaction
 from Auth.serializer import UserSerializer
-
+from Barber.models import CategoryService
 
 
 class Customers(serializers.ModelSerializer):
@@ -70,8 +70,16 @@ class CustomerSerializer(serializers.ModelSerializer):
 class CustomerAddCreditSerializer(serializers.Serializer):
     credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
 
+class CategoryServiceSerializerOnTransactions(serializers.ModelSerializer):
+    # category = serializers.CharField(source='category.category')
+    class Meta:
+        model = CategoryService
+        fields = ['service', 'price', 'servicePic', 'category',
+                #   "barber"
+                  ]
+
 class TransactionSerializer(serializers.ModelSerializer):
-    # service = 
+    service = CategoryServiceSerializerOnTransactions()
     class Meta:
         model = Transaction
         fields = ("id", "transaction_type", "amount", "timestamp", "service")

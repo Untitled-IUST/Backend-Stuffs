@@ -143,7 +143,7 @@ class Transaction(models.Model):
                                  validators=(MinValueValidator(0.00), ))
     timestamp = models.DateTimeField(auto_now_add=True, null=True,  blank=True)
     # order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
-    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=True, blank=True )
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=None, blank=True )
     class Meta:
         ordering = ['-timestamp',]
     def __str__(self) -> str:
