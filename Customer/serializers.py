@@ -59,6 +59,11 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
 class CustomerOnCommentSerializer(serializers.ModelSerializer):
     # full_name = serializers.CharField(read_only=True)
+    # profile_pic = serializers.CharField(read_only=True)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['profile_pic'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['profile_pic']
+        return representation    
     class Meta:
         model = Customer
         fields = ["id",'full_name','profile_pic']    
@@ -67,8 +72,9 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['first_name','last_name']
-class CustomerAddCreditSerializer(serializers.Serializer):
-    credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
+        
+# class CustomerAddCreditSerializer(serializers.Serializer):
+#     credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
 
 class CategoryServiceSerializerOnTransactions(serializers.ModelSerializer):
     # category = serializers.CharField(source='category.category')
@@ -85,3 +91,10 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = ("id", "transaction_type", "amount", "timestamp", "service")
         read_only_fields = ("id", "transaction_type", "amount", "timestamp", "service")
         # fields = "__all__" 
+
+# class CustomerAddingCreditSerializer(serializers.Serializer):
+#     customer_on_comment = CustomerOnCommentSerializer(read_only=True)
+#     class Meta:
+#         model = Customer
+#         fields = ["credit"]
+#         read_only_fields = ("customer_on_comment", )

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomerProfileView, TransactionsView, CustomerTransactionView
+from .views import CustomerProfileView, CustomerTransactionView
 from rest_framework import routers
 
 
