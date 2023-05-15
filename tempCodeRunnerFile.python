@@ -1,0 +1,2 @@
+a = {'1':"ali", "2":"reza", 1:"mamad"}
+print(a)

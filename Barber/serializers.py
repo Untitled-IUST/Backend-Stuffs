@@ -1,5 +1,9 @@
+from django.utils import timezone
+from datetime import datetime
 from rest_framework import serializers
-from .models import Barber,Rate,OrderServices,CategoryService,Category,TotalPrice
+from .models import Barber,Rate, Comment, Rating ,OrderServices,\
+                    CategoryService,Category, Transaction
+from Customer.serializers import CustomerOnCommentSerializer,TotalPrice
 from Auth.serializer import UserSerializer
 from Customer.serializers import CustomerSerializer
 from Customer.models import Customer
@@ -43,6 +47,17 @@ class OrderServiceSerializer(serializers.ModelSerializer):
         # service, created = Service.objects.get_or_create(id=self.context['service_id'])
         # self.validated_data.update({'customer': customer,'barber':barber,'service':service, **kwargs})
         self.validated_data.update({'customer':customer,**kwargs})
+        if self.validated_data["status"] == "paid" :#and customer.credit >= order.service.price:
+            # print("@@@hora1")
+            order_date =self.validated_data['date']
+            order_time = self.validated_data['time']
+            naive_datetime = datetime.combine(order_date, order_time,)
+            aware_datetime = timezone.make_aware(naive_datetime)
+            # date_and_time = datetime.combine(date=order_date,time= order_time, tzinfo=None)
+            service = self.validated_data['service']
+            trans = Transaction.objects.create(customer=customer, transaction_type='O',timestamp = aware_datetime ,
+                                        amount=service.price, service = service)
+            # print("****hora2")
         order = OrderServices.objects.create(**self.validated_data)
         return order
 
@@ -144,13 +159,86 @@ class Put_CustomerBasketSerializer(serializers.ModelSerializer):
 
     
     
+class CommentSerializer(serializers.ModelSerializer):
+    customer = CustomerOnCommentSerializer(read_only = True)
+    replies = serializers.SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ("id", "created_at","customer" )
+        # exclude = ("created_at")
+    def get_replies(self, obj):
+        replies = obj.replies.all()
+        serializer = self.__class__(replies, many=True, context=self.context)
+        return serializer.data        
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user.customer
+        return super().create(validated_data)
+
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    customer = serializers.ReadOnlyField(source='customer.id')
+    barber = serializers.ReadOnlyField(source='barber.id')
+
+    class Meta:
+        model = Rating
+        fields = "__all__"
+        read_only_fields = ("id", "created_at", "barber", "customer")
+        # exclude = ("created_at",)
+        
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.save()
+        return instance
 class BarberSerializer(serializers.ModelSerializer):
-    # services = ServiceSerializer(many=True)
+    comments = CommentSerializer(many=True)
+    rating = serializers.SerializerMethodField(source= "get_rating")
+    customers_rate = serializers.SerializerMethodField()
+    # comments = serializers.SerializerMethodField()
+    # rating = serializers.SerializerMethodField()
+    # comment_body = serializers.CharField(write_only=True, required=False)
     categories = CategorySerializer(many=True)
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','categories']
-
+        fields = ('id','BarberShop','Owner','phone_Number','area','address','rate', "rating",
+                  "customers_rate", 'background','logo', 'comments',"categories" )# ,"comment_body", ]# "rating"]
+        read_only_fields = ("id", "created_at", "BarberShop", "Owner", "phone_Number", "area", "address" ,
+                            'background','logo',"comments", "rate", "rating", "customers_rate")
+    def get_comments(self, obj):
+        comments = obj.comments.all()
+        serializer = CommentSerializer(comments, many=True, context=self.context)
+        return serializer.data  
+    def get_rating(self, obj):
+        comments = obj.comments.all()
+        if comments:
+            ratings = [comment.rating for comment in comments]
+            return sum(ratings) / len(ratings)
+        return 0
+    def get_rating(self,obj):
+        ratings = obj.ratings.all()
+        if ratings :
+            ratings = [rating_instance.rating for rating_instance in ratings]
+            # print(*ratings, sep = "\*n")
+            return round(sum(ratings) / len(ratings), 2)
+        else:
+            return 0.00
+    def get_customers_rate(self, obj):
+        customer = self.context['request'].user.customer
+        # print(customer, sep = "*****\n")
+        try:
+            rating = obj.ratings.filter(customer=customer).order_by("-created_at").first()
+            # rating = Rating.objects.get(customer= customer, barber = obj)
+            return rating.rating
+        except:
+            return None
+            
+    # def create(self, validated_data):
+    #     validated_data['customer'] = self.context['request'].user.customer
+    #     return super().create(validated_data)
+    
+    
+    # services = ServiceSerializer(many=True)
 
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()

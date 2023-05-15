@@ -40,6 +40,30 @@ class Barber(models.Model):
   rate = models.FloatField(default=1,null=False)
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
   logo = models.ImageField(upload_to='Barber/Logo',null=False,default='default_profile.png')
+  def __str__(self):
+    return f"Barber No.{self.pk}"
+
+
+class Comment(models.Model):
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
+  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+  body = models.TextField(max_length=1000, )
+  created_at = models.DateTimeField(auto_now_add=True)
+  parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
+  # rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True, default=None)
+  class Meta:
+    ordering = ['-created_at']
+  def __str__(self):
+    return f'{self.customer} Says:{self.body}'  
+  @property
+  def children(self):
+      return Comment.objects.filter(parent_comment=self).reverse()
+  @property
+  def is_parent(self):
+      if self.parent_comment is None:
+          return True
+      return False
+
 
 
 
@@ -105,3 +129,33 @@ class TotalPrice(models.Model):
 
 
 
+
+class Rating(models.Model):
+  barber= models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="ratings")
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_ratings")
+  rating = models.PositiveSmallIntegerField ( validators=[MinValueValidator(1), MaxValueValidator(5)], null=False, default=3)
+  created_at = models.DateTimeField(auto_now_add=True)
+  class Meta:
+    ordering = ['-created_at']
+    unique_together = ('barber', 'customer')
+  def __str__(self) -> str:
+     return f"{self.customer} Rates {self.barber}:({self.rating})"
+    
+    
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('C', 'Charge'),
+        ('O', 'Order'),
+    )
+
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="transactionCustomer")
+    transaction_type =  models.CharField(max_length=1, choices=TRANSACTION_TYPES, default='C')
+    amount = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
+                                 validators=(MinValueValidator(0.00), ))
+    timestamp = models.DateTimeField( null=True,  blank=True , default=datetime.datetime.now())
+    # order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=None, blank=True )
+    class Meta:
+        ordering = ['-timestamp',]
+    def __str__(self) -> str:
+        return f"{self.customer} Has {self.amount} Toman on {self.timestamp}"

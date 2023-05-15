@@ -28,8 +28,9 @@ SECRET_KEY = "django-insecure-*qyobn_46!3pc_-lb9ru!$l_o!w)gbs*e9^id8=_ei^n@u$w4j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['amirmohammadkomijani.pythonanywhere.com']
+ALLOWED_HOSTS = [ "127.0.0.1", 
+                "localhost",  
+                'amirmohammadkomijani.pythonanywhere.com']
 
 
 # Application definition
@@ -102,8 +103,14 @@ WSGI_APPLICATION = "BackendProject.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nadomne2',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'ferz2020',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+            
     }
 }
 
@@ -117,8 +124,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=45),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 
@@ -169,3 +176,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# print ("base dir %s" % BASE_DIR + "*\n"*10)

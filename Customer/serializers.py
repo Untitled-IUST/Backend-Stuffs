@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import Customer
+from Barber.models import Transaction
 from Auth.serializer import UserSerializer
-
+from Barber.models import CategoryService
 
 
 class Customers(serializers.ModelSerializer):
@@ -31,7 +32,13 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Customer
-        fields = ['first_name','last_name','phone_Number','area','profile_pic','user',]
+        fields = ['first_name','last_name','phone_Number','area','profile_pic','user', "credit"]
+
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['profile_pic'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['profile_pic']
+        return representation
     
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name',instance.first_name)
@@ -60,11 +67,47 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
         return representation
 
 
+class CustomerOnCommentSerializer(serializers.ModelSerializer):
+    # full_name = serializers.CharField(read_only=True)
+    # profile_pic = serializers.CharField(read_only=True)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['profile_pic'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['profile_pic']
+        return representation    
+    class Meta:
+        model = Customer
+        fields = ["id",'full_name','profile_pic']    
+        read_only_fileds = ("id",'full_name','profile_pic',)
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['first_name','last_name']
+        fields = ['first_name','last_name']        
 
+# class CustomerAddCreditSerializer(serializers.Serializer):
+#     credit = serializers.DecimalField( max_digits=5, decimal_places=2, default=0.00)
+
+class CategoryServiceSerializerOnTransactions(serializers.ModelSerializer):
+    # category = serializers.CharField(source='category.category')
+    class Meta:
+        model = CategoryService
+        fields = ['service', 'price', 'servicePic', 'category',
+                #   "barber"
+                  ]
+
+class TransactionSerializer(serializers.ModelSerializer):
+    service = CategoryServiceSerializerOnTransactions()
+    class Meta:
+        model = Transaction
+        fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        read_only_fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        # fields = "__all__" 
+
+# class CustomerAddingCreditSerializer(serializers.Serializer):
+#     customer_on_comment = CustomerOnCommentSerializer(read_only=True)
+#     class Meta:
+#         model = Customer
+#         fields = ["credit"]
+#         read_only_fields = ("customer_on_comment", )
 
 class CustomerWalletSerializer(serializers.ModelSerializer):
     class Meta:
