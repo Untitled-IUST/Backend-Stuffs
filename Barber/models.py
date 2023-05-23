@@ -50,6 +50,7 @@ class Comment(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
   barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000, )
+  reply_text = models.TextField(max_length=1000, null=True, blank=True, default=None)
   created_at = models.DateTimeField(auto_now_add=True)
   parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
   # rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True, default=None)
@@ -57,14 +58,14 @@ class Comment(models.Model):
     ordering = ['-created_at']
   def __str__(self):
     return f'{self.customer} Says:{self.body}'  
-  @property
-  def children(self):
-      return Comment.objects.filter(parent_comment=self).reverse()
-  @property
-  def is_parent(self):
-      if self.parent_comment is None:
-          return True
-      return False
+  # @property
+  # def children(self):
+  #     return Comment.objects.filter(parent_comment=self).reverse()
+  # @property
+  # def is_parent(self):
+  #     if self.parent_comment is None:
+  #         return True
+  #     return False
 
 
 

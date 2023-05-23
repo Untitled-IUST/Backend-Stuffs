@@ -102,7 +102,7 @@ class BarberView(ModelViewSet):
     search_fields = ['BarberShop']
     ordering_fields = ['rate']
 
-    @action(methods=["POST",], permission_classes=[IsAuthenticated], detail=True)
+    @action(methods=["POST"], permission_classes=[IsAuthenticated], detail=True)
     def add_coment(self, request, *args, **kwargs):
         serializer = CommentSerializer(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)

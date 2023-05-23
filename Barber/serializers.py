@@ -72,22 +72,27 @@ class CategorySerializer(serializers.ModelSerializer):
         catg = Category.objects.create(**self.validated_data)
         return catg
 
+class BarberOnCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Barber
+        fields = ('id','BarberShop','Owner' )
+        read_only_fields = ("id", "BarberShop", "Owner",)
 class CommentSerializer(serializers.ModelSerializer):
     customer = CustomerOnCommentSerializer(read_only = True)
-    replies = serializers.SerializerMethodField()
+    # barber = BarberOnCommentSerializer(read_only =True)
+    # replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
         fields = "__all__"
         read_only_fields = ("id", "created_at","customer" )
         # exclude = ("created_at")
-    def get_replies(self, obj):
-        replies = obj.replies.all()
-        serializer = self.__class__(replies, many=True, context=self.context)
-        return serializer.data        
+    # def get_replies(self, obj):
+    #     replies = obj.replies.all()
+    #     serializer = self.__class__(replies, many=True, context=self.context)
+    #     return serializer.data        
     def create(self, validated_data):
         validated_data['customer'] = self.context['request'].user.customer
         return super().create(validated_data)
-
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -145,14 +150,13 @@ class BarberSerializer(serializers.ModelSerializer):
             return rating.rating
         except:
             return None
-            
+
     # def create(self, validated_data):
     #     validated_data['customer'] = self.context['request'].user.customer
     #     return super().create(validated_data)
     
     
     # services = ServiceSerializer(many=True)
-
 class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():
