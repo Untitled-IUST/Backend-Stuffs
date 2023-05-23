@@ -220,12 +220,12 @@ class BarberAreasSerializer(serializers.ModelSerializer):
 
 # Comment Serializer; allow customer to post a comment
 class CommentSerializer(serializers.ModelSerializer):
-    customer = CustomerWalletSerializer(read_only = True)
+    # customer = CustomerWalletSerializer(read_only = True)
     # replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
         fields = "__all__"
-        read_only_fields = ("id", "created_at","customer" )
+        # read_only_fields = ("id", "created_at","customer" )
         # exclude = ("created_at")
     # def get_replies(self, obj):
     #     replies = obj.replies.all()
@@ -235,7 +235,11 @@ class CommentSerializer(serializers.ModelSerializer):
     # def create(self, validated_data):
     #     validated_data['customer'] = self.context['request'].user.customer
     #     return super().create(validated_data)
-    
+class ReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'barber', 'reply', 'created_at')
+        read_only_fields = ('id', 'created_at')
 
 
 

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment
 from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAreasSerializer,OrderServiceSerializer, \
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
-                        Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer, CommentSerializer
+                        Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer, CommentSerializer, ReplySerializer
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
@@ -150,17 +150,30 @@ class Areas(ModelViewSet):
 
 
 
-class CommentCreateView(CreateAPIView):
-    queryset = Comment.objects.all()
+# class CommentCreateView(CreateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#     permission_classes = [IsAuthenticated,]
+
+#     def perform_create(self, serializer):
+#         serializer.save(customer=self.request.user.customer)
+# class CommentReplyView(UpdateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#     permission_classes = [IsAuthenticated,]
+
+#     def perform_update(self, serializer):
+#         if self.request.useer.barber:
+#             serializer.save(barber=self.request.user.barber)
+#         return Response("google.com",status=404 )
+        
+class CommentCreateAPIView(CreateAPIView):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+
+class ReplyCreateAPIView(CreateAPIView):
+    serializer_class = ReplySerializer
 
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user.customer)
-class CommentReplyView(UpdateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_update(self, serializer):
-        serializer.save(barber=self.request.user.barber)
+        comment_id = self.kwargs.get('comment_id')
+        comment = get_object_or_404(Comment, id=comment_id)
+        serializer.save(comment=comment)
