@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment
 from Auth.serializer import UserSerializer
+from Customer.serializers import  CustomerWalletSerializer
 from Customer.models import Customer
 
 
@@ -217,6 +218,24 @@ class BarberAreasSerializer(serializers.ModelSerializer):
 
 
 
+# Comment Serializer; allow customer to post a comment
+class CommentSerializer(serializers.ModelSerializer):
+    customer = CustomerWalletSerializer(read_only = True)
+    # replies = serializers.SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ("id", "created_at","customer" )
+        # exclude = ("created_at")
+    # def get_replies(self, obj):
+    #     replies = obj.replies.all()
+    #     serializer = self.__class__(replies, many=True, context=self.context)
+    #     return serializer.data        
+
+    # def create(self, validated_data):
+    #     validated_data['customer'] = self.context['request'].user.customer
+    #     return super().create(validated_data)
+    
 
 
 

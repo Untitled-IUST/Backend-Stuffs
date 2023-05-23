@@ -2,11 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Barber,OrderServices,Category,CategoryService,BarberDescription
-from .serializers import BarberInfoSerializer,BarberProfileSerializer,BarberAreasSerializer,OrderServiceSerializer,CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer,Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer
+from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment
+from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAreasSerializer,OrderServiceSerializer, \
+                        CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
+                        Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer, CommentSerializer
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
@@ -147,3 +150,17 @@ class Areas(ModelViewSet):
 
 
 
+class CommentCreateView(CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user.customer)
+class CommentReplyView(UpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        serializer.save(barber=self.request.user.barber)

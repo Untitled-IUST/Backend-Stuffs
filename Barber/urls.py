@@ -28,5 +28,7 @@ router.register('order',views.OrderServiceView,basename='order')
 router.register('basket',views.CustomerBasketView,basename='Basket')
 
 
-
-urlpatterns = router.urls + nestedRouter.urls + service_router.urls
+urlpatterns = [
+    path('comments/create/', views.CommentCreateView.as_view(), name='comment-create'),
+    path('comments/<int:pk>/reply/', views.CommentReplyView.as_view(), name="comment-reply")
+    ] + router.urls + nestedRouter.urls + service_router.urls
