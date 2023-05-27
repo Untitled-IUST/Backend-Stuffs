@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment
 from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAreasSerializer,OrderServiceSerializer, \
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
-                        Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer, CommentSerializerOnPOST, CommentSerializerOnPUT
+                        Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer,\
+                        CommentSerializerOnPOST, CommentSerializerOnPUT, CommentSerializerOnGET
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
@@ -169,12 +170,14 @@ class Areas(ModelViewSet):
 #         return Response("google.com",status=404 )
         
 class CommentCreateAPIView(CreateAPIView):#, generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializerOnPOST
     queryset = Comment.objects.all()    
     # def update(self, request, *args, **kwargs):
     #     # serializer_class = 
     #     return super().update(request, *args, **kwargs)
 class CommentReplyAPIView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializerOnPUT
     queryset = Comment.objects.all()    
     # def perform_create(self, serializer):
@@ -184,3 +187,9 @@ class CommentReplyAPIView(generics.RetrieveUpdateAPIView):
     #         comment = get_object_or_404(Comment, id=comment_id)
     #         serializer.save(barber=self.request.user.barber, comment=comment)
         # serializer.save(comment=comment)
+class  CommentShowAPIView(generics.ListAPIView):
+    # queryset = Comment.objects.all()
+    serializer_class = CommentSerializerOnGET
+    def get_queryset(self):
+        barber_id = self.kwargs['barber_id']
+        return Comment.objects.filter(barber_id=barber_id)

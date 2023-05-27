@@ -169,7 +169,7 @@ class CommentSerializerOnPUT(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id',"body", 'reply', 'created_at')
-        read_only_fields = ('id', 'created_at',)
+        read_only_fields = ('id', 'created_at',"body")
 ################################################################
 
 ### customer ordering and paying process
