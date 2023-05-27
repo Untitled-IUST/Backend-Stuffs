@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Customer
 from Auth.serializer import UserSerializer
+from Barber.models import CategoryService,Transaction
 
 
 
@@ -43,3 +44,18 @@ class CustomerWalletSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class CategoryServiceSerializerOnTransactions(serializers.ModelSerializer):
+    # category = serializers.CharField(source='category.category')
+    class Meta:
+        model = CategoryService
+        fields = ['service', 'price', 'servicePic', 'category',
+                #   "barber"
+                  ]
+class TransactionSerializer(serializers.ModelSerializer):
+    service = CategoryServiceSerializerOnTransactions()
+    class Meta:
+        model = Transaction
+        fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        read_only_fields = ("id", "transaction_type", "amount", "timestamp", "service")
+        # fields = "__all__" 

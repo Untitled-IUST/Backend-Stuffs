@@ -144,7 +144,13 @@ class CommentSerializerOnPOST(serializers.ModelSerializer):
     # replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = ("id", "barber", "customer", "body", "created_at",)
+        fields = ("id", "barber",  "body", )
+        # read_only_fields = ("id", "created_at","customer" )
+
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user.customer
+        return super().create(validated_data)
+
         # read_only_fields = ("id", "created_at","customer" )
         # exclude = ("created_at")
     # def get_replies(self, obj):

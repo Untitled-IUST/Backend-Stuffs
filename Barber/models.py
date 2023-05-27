@@ -3,6 +3,7 @@ from django.conf import settings
 from Auth.models import User
 from Customer.models import Customer
 import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Barber(models.Model):
@@ -109,6 +110,25 @@ class Comment(models.Model):
   #     if self.parent_comment is None:
   #         return True
   #     return False
+  
+      
+class Transaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('C', 'Charge'),
+        ('O', 'Order'),
+    )
+
+    customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="transactionCustomer")
+    transaction_type =  models.CharField(max_length=1, choices=TRANSACTION_TYPES, default='C')
+    amount = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
+                                 validators=(MinValueValidator(0.00), ))
+    timestamp = models.DateTimeField( null=True,  blank=True , default=datetime.datetime.now())
+    # order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=None, blank=True )
+    class Meta:
+        ordering = ['-timestamp',]
+    def __str__(self) -> str:
+        return f"{self.customer} Has {self.amount} Toman on {self.timestamp}"
 
 
 

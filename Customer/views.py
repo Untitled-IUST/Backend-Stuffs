@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from .models import Customer
-from .serializers import CustomerProfileSerializer,CustomerWalletSerializer
+from .serializers import CustomerProfileSerializer,CustomerWalletSerializer, TransactionSerializer
+from Barber.models import Transaction
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -48,3 +50,10 @@ class WalletView(ModelViewSet):
             return Response(serializer.data)
     
 
+
+class CustomerTransactionView(APIView):
+    def get(self, request):
+        customer = Customer.objects.get(user_id=request.user.id, )
+        transactions = Transaction.objects.filter(customer_id=customer)
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
