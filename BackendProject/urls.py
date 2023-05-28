@@ -24,7 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("barber/",include('Barber.urls')),
     path("customer/",include('Customer.urls')),
-    path('auth/',include('djoser.urls')),
+    path('auth/',include('djoser.urls')),               # inja ba r"" url haro zade bood
     path('auth/', include('djoser.urls.jwt')),
 ]
 if settings.DEBUG:
