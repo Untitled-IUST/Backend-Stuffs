@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium, Rating
 from Auth.serializer import UserSerializer
 from Customer.serializers import  CustomerWalletSerializer
 from Customer.models import Customer
@@ -9,6 +9,20 @@ from rest_framework.response import Response
 
 
 
+class RatingSerializer(serializers.ModelSerializer):
+    customer = serializers.ReadOnlyField(source='customer.id')
+    barber = serializers.ReadOnlyField(source='barber.id')
+
+    class Meta:
+        model = Rating
+        fields = "__all__"
+        read_only_fields = ("id", "created_at", "barber", "customer")
+        # exclude = ("created_at",)
+        
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.save()
+        return instance
 
 #######################################################
 ### Barber Panel Serializers
@@ -230,13 +244,33 @@ class BarberInfoDescriptionSerializer(serializers.ModelSerializer):
     
 class BarberInfoSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True)
+    rating = serializers.SerializerMethodField(source= "get_rating")
+    customers_rate = serializers.SerializerMethodField()
     barberDesc = BarberInfoDescriptionSerializer(many=True)
     comments = CommentSerializerOnGET(many=True,) 
     class Meta:
         model = Barber
-        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','categories','barberDesc', "comments"]
+        fields = ['id','BarberShop','Owner','phone_Number','area','address','rate','background','logo','categories','barberDesc',
+                  "rating", "customers_rate", "comments"]
 
-
+    def get_rating(self,obj):
+        ratings = obj.ratings.all()
+        if ratings :
+            ratings = [rating_instance.rating for rating_instance in ratings]
+            # print(*ratings, sep = "\*n")
+            return round(sum(ratings) / len(ratings), 2)
+        else:
+            return 0.00
+    def get_customers_rate(self, obj):
+        customer = self.context['request'].user.customer
+        # print(customer, sep = "*****\n")
+        try:
+            rating = obj.ratings.filter(customer=customer).order_by("-created_at").first()
+            # rating = Rating.objects.get(customer= customer, barber = obj)
+            return rating.rating
+        except:
+            return None
+            
 ## 2/ Ordering a service
 
 class OrderServiceSerializer(serializers.ModelSerializer):
