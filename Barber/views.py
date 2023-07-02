@@ -7,6 +7,7 @@ from rest_framework import generics
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from templated_mail.mail import BaseEmailMessage
 from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment
 from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAreasSerializer,OrderServiceSerializer, \
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
@@ -15,7 +16,6 @@ from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAre
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
-
 
 
 
@@ -173,20 +173,30 @@ class CommentCreateAPIView(CreateAPIView):#, generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializerOnPOST
     queryset = Comment.objects.all()    
-    # def update(self, request, *args, **kwargs):
-    #     # serializer_class = 
-    #     return super().update(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        # Get the customer who left the comment (assuming they are the authenticated user)
+        customer = self.request.user
+        customer_email = customer.email
+        # customer_name = customer.first_name
+        customer_name = Customer.objects.filter(user_id = customer.id).first
+        # Perform any additional logic or validation here
+        
+        try:
+            mail_message = BaseEmailMessage(
+                template_name="emails/add_comment_email.html",
+                # context={"name":customer_name }
+                context={}
+            )
+            mail_message.send((customer_email,))
+        except Exception as e:
+            # Handle any exceptions that occur during email sending
+            # You can log the error or take appropriate action
+            print(f"Error sending email: {e}")
 class CommentReplyAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializerOnPUT
     queryset = Comment.objects.all()    
-    # def perform_create(self, serializer):
-    #     # if self.request.user.barber == comment.barber:
-    #     # if self.request.user.barber == self.context['request'].user.barber:
-    #         comment_id = self.kwargs.get('comment_id')
-    #         comment = get_object_or_404(Comment, id=comment_id)
-    #         serializer.save(barber=self.request.user.barber, comment=comment)
-        # serializer.save(comment=comment)
+    
 class  CommentShowAPIView(generics.ListAPIView):
     # queryset = Comment.objects.all()
     serializer_class = CommentSerializerOnGET
