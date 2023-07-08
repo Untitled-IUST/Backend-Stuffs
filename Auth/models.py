@@ -11,7 +11,7 @@ class User(AbstractUser):
     )
 
     role = models.CharField(choices=choice_field,max_length=8)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True,null=False)
     username = models.CharField(default='user',null=True,max_length=20,unique=False)
     # expire_date = models.DateField(default=datetime.date.today() + relativedelta(months=1))
     USERNAME_FIELD = "email"

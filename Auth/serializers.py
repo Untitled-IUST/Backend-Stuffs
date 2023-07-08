@@ -22,6 +22,9 @@ class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         fields = ['email','username']
 
+# class ChangeUserInfo(BaseUserSerializer):
+#     class Meta(BaseUserSerializer.Meta):
+#         fields = ['email','username']
 
 
 

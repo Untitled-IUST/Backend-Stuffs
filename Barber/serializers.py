@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium, Rating
 from Auth.serializers import UserSerializer
+from Auth.models import User
 from Customer.serializers import  CustomerWalletSerializer
 from Customer.models import Customer
 from dateutil.relativedelta import relativedelta
@@ -134,9 +135,14 @@ class BarberDescriptionSerializer(serializers.ModelSerializer):
         representation['img'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['img']
         return representation
 
+class ChangeUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','email']
+        # extra_kwargs = {'password': {'write_only': True}}
 
 class BarberProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = ChangeUserSerializer()
     class Meta():
         model = Barber
         fields = ['BarberShop','Owner','Parvaneh','phone_Number','area','address','background','logo','user',]
@@ -154,7 +160,7 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         
         user_data = validated_data.pop('user', None)
         user = instance.user
-        user_serializer = UserSerializer(user, data=user_data)
+        user_serializer = ChangeUserSerializer(user, data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
 
