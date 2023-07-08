@@ -24,6 +24,7 @@ router.register('profile',views.BarberProfileView,basename='profile')
 router.register('description',views.BarberDescriptionView,basename='description')
 router.register('panel',views.BarberPanelView,basename='Panel')
 router.register('buypremium',views.BarberBuyPremiumView,basename='buypremium')
+router.register('changepassword',views.ChangePasswordView,basename='change')
 
 
 

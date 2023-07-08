@@ -13,11 +13,12 @@ from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAre
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
                         Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer,\
                         CommentSerializerOnPOST, CommentSerializerOnPUT, CommentSerializerOnGET,GetBarberPremiumSerializer,PutBarberPremiumSerializer,\
-                        RatingSerializer,ServiceGallerySerializer
+                        RatingSerializer,ServiceGallerySerializer,ChangePasswordSerializer
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
 import datetime
+from Auth.models import User
 
 
 
@@ -284,3 +285,12 @@ class  CommentShowAPIView(generics.ListAPIView):
     def get_queryset(self):
         (barber_id,created) = Barber.objects.get_or_create(user_id = self.request.user.id)
         return Comment.objects.filter(barber_id=barber_id)
+
+
+class ChangePasswordView(ModelViewSet):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated,]
+    queryset = User.objects.all()
+    # def get_queryset(self):
+    #     user = self.request.user.id
+    #     return User.objects.filter(id = user)

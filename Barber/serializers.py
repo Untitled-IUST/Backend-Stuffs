@@ -198,13 +198,13 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user', None)
         user = instance.user
         user_serializer = UserSerializer(user, data=user_data)
-        user_serializer.set_password(validated_data['password'])
+        # user_serializer.password = user_serializer.set_password(validated_data['password'])
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
-
+#pbkdf2_sha256$600000$YT8fd2Qfa0j5oCqvMAXSux$epKOhMueIvQEXMuZZYOMNXSdv80qeLsQPfgcgdEoMRQ=
         return instance
     
-    
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['background'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['background']
@@ -430,3 +430,23 @@ class BarberAreasSerializer(serializers.ModelSerializer):
     class Meta():
         model = Barber
         fields = ['area']
+
+
+from django.contrib.auth import authenticate
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    Newpassword = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['Newpassword']
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        user.set_password(validated_data['Newpassword'])
+        user.save()
+        return user
+
+
+
+
