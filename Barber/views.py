@@ -127,7 +127,7 @@ class OrderServiceView(ModelViewSet):
 
 class CustomerBasketView(ModelViewSet):
     permission_classes = [IsAuthenticated]
-
+    
     def get_serializer_class(self):
         if self.request.method == "PUT":
             return Put_CustomerBasketSerializer
@@ -175,6 +175,19 @@ class CommentReplyAPIView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = newCommentSerializerOnPOST
     queryset = Comment.objects.all()    
+    def perform_create(self, serializer):
+        try:
+            customer = self.request.user   
+            customer_name = Customer.objects.filter(user_id = customer.id).first().first_name                 
+            mail_message = BaseEmailMessage(
+                template_name="emails/reply_comment_email.html",
+                context={"name": customer_name}
+            )
+            mail_message.send(to=[customer])
+            return super().perform_create(serializer)            
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return super().perform_create(serializer)      
     
 class  CommentShowAPIView(generics.ListAPIView):
     serializer_class = CommentSerializerOnGET
