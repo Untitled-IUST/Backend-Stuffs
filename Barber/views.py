@@ -82,7 +82,8 @@ class BarberDescriptionView(ModelViewSet):
 
 
 ## 3/ Barber management segment
-from django.http import Http404
+from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
 class BarberPanelView(ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -97,10 +98,13 @@ class BarberPanelView(ModelViewSet):
     
     def get_queryset(self):
         barber = Barber.objects.get(user_id = self.request.user.id)
-        premium = BarberPremium.objects.select_related('barber').filter(expire_date__gt=datetime.date.today()).exists()
-        if premium:
+        # return OrderServices.objects.filter(barber = barber)
+
+        premium = BarberPremium.objects.filter(barber = barber,expire_date__gt=timezone.now().date())
+        if premium.exists():
             return OrderServices.objects.filter(barber = barber)
-            
+        raise PermissionDenied("You need to charge your account.")
+
         
 class BarberPremiumView(APIView):
     def get(self,request):
