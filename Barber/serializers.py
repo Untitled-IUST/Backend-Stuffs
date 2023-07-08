@@ -182,7 +182,7 @@ class BarberProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta():
         model = Barber
-        fields = ['BarberShop','Owner','Parvaneh','phone_Number','area','address','background','logo','user',]
+        fields = ['BarberShop','Owner','Parvaneh','phone_Number','area','address','gender','foundation','background','logo','user',]
 
     def update(self, instance, validated_data):
         instance.BarberShop = validated_data.get('BarberShop',instance.BarberShop)
@@ -190,6 +190,8 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         instance.Parvaneh = validated_data.get('Parvaneh',instance.Parvaneh)
         instance.phone_Number = validated_data.get('phone_Number',instance.phone_Number)
         instance.area = validated_data.get('area',instance.area)
+        instance.gender = validated_data.get('gender',instance.gender)
+        instance.foundation = validated_data.get('foundation',instance.foundation)
         instance.address = validated_data.get('address',instance.address)
         instance.background = validated_data.get('background',instance.background)
         instance.logo = validated_data.get('logo',instance.logo)
@@ -201,7 +203,6 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         # user_serializer.password = user_serializer.set_password(validated_data['password'])
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
-#pbkdf2_sha256$600000$YT8fd2Qfa0j5oCqvMAXSux$epKOhMueIvQEXMuZZYOMNXSdv80qeLsQPfgcgdEoMRQ=
         return instance
     
 
@@ -445,7 +446,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['Newpassword'])
         user.save()
         return user
-
-
-
 

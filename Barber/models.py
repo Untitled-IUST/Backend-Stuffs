@@ -25,6 +25,11 @@ class Barber(models.Model):
     ('Jordan','Jordan'),
   )
 
+  gender_choices = (
+    ('Male','Male'),
+    ('Female','Female')
+  )
+
   user = models.ForeignKey(
         User, on_delete=models.CASCADE,related_name='users',null=False)
   BarberShop = models.CharField(max_length=255,unique=False,null=False)
@@ -33,6 +38,8 @@ class Barber(models.Model):
   phone_Number = models.CharField(max_length=11,unique = True,null=True)
   area = models.CharField(max_length=255,null=False,choices=area_chices)
   address = models.CharField(max_length=255,null=False)
+  gender = models.CharField(max_length=6,choices=gender_choices,default='M')
+  foundation = models.DateField(null=True)
   rate = models.FloatField(default=1,null=False)
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
   logo = models.ImageField(upload_to='Barber/Logo',null=False,default='default_profile.png')
@@ -98,12 +105,10 @@ class OrderServices(models.Model):
   
   order_status = (
     ('ordering','ordering'),
-    # ('ordered','ordered'),
     ('confirmed','confirmed'),
     ('paid','paid'),
     ('BarberCancelled','BarberCancelled'),
     ('CustomerCancelled','CustomerCancelled'),
-    ('CustomerNotCome','CustomerNotCome'),
     ('Done','Done'),
   )
   

@@ -290,7 +290,6 @@ class  CommentShowAPIView(generics.ListAPIView):
 class ChangePasswordView(ModelViewSet):
     serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated,]
-    queryset = User.objects.all()
-    # def get_queryset(self):
-    #     user = self.request.user.id
-    #     return User.objects.filter(id = user)
+    def get_queryset(self):
+        user = self.request.user.id
+        return User.objects.filter(id = user)

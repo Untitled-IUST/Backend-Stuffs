@@ -9,11 +9,12 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Customer
-        fields = ['first_name','last_name','phone_Number','area','profile_pic','user',]
+        fields = ['first_name','last_name','birthday','phone_Number','area','profile_pic','user',]
     
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name',instance.first_name)
         instance.last_name = validated_data.get('last_name',instance.last_name)
+        instance.birthday = validated_data.get('birthday',instance.birthday)
         instance.phone_Number = validated_data.get('phone_Number',instance.phone_Number)
         instance.area = validated_data.get('area',instance.area)
         instance.profile_pic = validated_data.get('profile_pic',instance.profile_pic)
