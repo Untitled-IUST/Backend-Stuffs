@@ -432,7 +432,6 @@ class BarberAreasSerializer(serializers.ModelSerializer):
         fields = ['area']
 
 
-from django.contrib.auth import authenticate
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
     Newpassword = serializers.CharField(write_only=True)
