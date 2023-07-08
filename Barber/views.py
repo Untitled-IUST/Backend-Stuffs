@@ -158,25 +158,18 @@ class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()    
         
     def perform_create(self, serializer):
-        customer = self.request.user
-        customer_email = customer.email
-        # customer_name = customer.first_name
-        customer_name = Customer.objects.filter(user_id = customer.id).first
-
         try:
+            customer = self.request.user   
+            customer_name = Customer.objects.filter(user_id = customer.id).first().first_name                 
             mail_message = BaseEmailMessage(
                 template_name="emails/add_comment_email.html",
-                context={}
+                context={"name": customer_name}
             )
-            mail_message.send((customer_email,))
+            mail_message.send(to=[customer])
             return super().perform_create(serializer)            
         except Exception as e:
             print(f"Error sending email: {e}")
-            return super().perform_create(serializer)            
-# class CommentReplyAPIView(generics.RetrieveUpdateAPIView):
-#     permission_classes = (IsAuthenticated,)
-#     serializer_class = CommentSerializerOnPUT
-#     queryset = Comment.objects.all()    
+            return super().perform_create(serializer)       
     
 class CommentReplyAPIView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
