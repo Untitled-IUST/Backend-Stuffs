@@ -287,7 +287,8 @@ class PutBarberPremiumSerializer(serializers.ModelSerializer):
         # elif instance.expire_date - datetime.date.today() < 0:
         #     return Response({"message":"wrong"})
         else:
-            return 0
+            days = (instance.expire_date - datetime.date.today()).days
+            raise serializers.ValidationError({"account":f"your account is charged for {days}"})
     
     
     
