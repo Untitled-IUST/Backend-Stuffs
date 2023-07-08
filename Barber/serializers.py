@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,\
+                    Reply
 from Auth.serializer import UserSerializer
 from Customer.serializers import  CustomerWalletSerializer
 from Customer.models import Customer
@@ -165,8 +166,16 @@ class CommentSerializerOnPOST(serializers.ModelSerializer):
     #     customer = obj.customer
     #     serializer = CustomerWalletSerializer(customer, many=False, context=self.context)
     #     return serializer.data
+class ReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reply
+        # fields = '__all__'
+        fields = ("text_body", "created_at")
+
 class CommentSerializerOnGET(serializers.ModelSerializer):
     customer = CustomerWalletSerializer(read_only = True)
+    replies = ReplySerializer(many=True, read_only=True)  # Include the replies field
+
     class Meta:
         model = Comment
         fields = "__all__"
@@ -176,6 +185,12 @@ class CommentSerializerOnPUT(serializers.ModelSerializer):
         model = Comment
         fields = ('id',"body", 'reply', 'created_at')
         read_only_fields = ('id', 'created_at',"body")
+
+class newCommentSerializerOnPOST(serializers.ModelSerializer):
+    class Meta:
+        model=Reply
+        fields = '__all__'
+
 ################################################################
 
 ### customer ordering and paying process

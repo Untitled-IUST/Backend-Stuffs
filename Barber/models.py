@@ -95,14 +95,19 @@ class Comment(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
   barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000,)
-  reply = models.TextField(max_length=1000,null=True, blank=True, default=None)
+  # reply = models.TextField(max_length=1000,null=True, blank=True, default=None)
+  
   created_at = models.DateTimeField(auto_now_add=True)
   # parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
+  @property
+  def replies(self):
+      return Reply.objects.filter(comment=self).reverse()
+
   class Meta:
     ordering = ['-created_at']
   def __str__(self):
-    return f'{self.customer} Says:{self.body}; Reply:{self.reply}'  
-  # @property
+    return f'[{self.id}]{self.customer} Says:{self.body};'  
+  # @property 
   # def children(self):
       # return Comment.objects.filter(parent_comment=self).reverse()
   # @property
@@ -110,8 +115,10 @@ class Comment(models.Model):
   #     if self.parent_comment is None:
   #         return True
   #     return False
-  
-      
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="replies" )
+    created_at = models.DateTimeField(auto_now_add=True,)
+    text_body = models.TextField(max_length=1000,default="comment-reply")   
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
         ('C', 'Charge'),
