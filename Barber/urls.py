@@ -15,7 +15,10 @@ router = routers.SimpleRouter()
 
 nestedRouter.register('categories', views.addCategoryView, basename='categories')
 service_router = nested.NestedSimpleRouter(nestedRouter, 'categories', lookup='category')
-service_router.register('service', views.addCategoryServiceView, basename='services')
+service_router.register('service', views.addCategoryServiceView, basename='service')
+gallery_router = nested.NestedSimpleRouter(service_router, 'service', lookup='service')
+gallery_router.register('galleries', views.addServiceGalleryView, basename='galleries')
+
 
 router.register('profile',views.BarberProfileView,basename='profile')
 router.register('description',views.BarberDescriptionView,basename='description')
@@ -40,4 +43,4 @@ urlpatterns = \
     path('premium/', views.BarberPremiumView.as_view(), name="premium"),
     path('premium/<int:pk>/', views.BarberPremiumView.as_view(), name="premium"),
     ] + \
-        router.urls + nestedRouter.urls + service_router.urls
+        router.urls + nestedRouter.urls + service_router.urls + gallery_router.urls

@@ -8,12 +8,12 @@ from rest_framework import generics , status
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment , BarberPremium, Rating
+from .models import Barber,OrderServices,Category,CategoryService,BarberDescription, Comment , BarberPremium, Rating , ServiceGallery
 from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAreasSerializer,OrderServiceSerializer, \
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
                         Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer,\
                         CommentSerializerOnPOST, CommentSerializerOnPUT, CommentSerializerOnGET,GetBarberPremiumSerializer,PutBarberPremiumSerializer,\
-                        RatingSerializer
+                        RatingSerializer,ServiceGallerySerializer
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
@@ -27,6 +27,12 @@ import datetime
 ### Barber Panel Serializers
 
 ## 1/ adding category and service
+
+
+
+        
+        
+
 
 class addCategoryView(ModelViewSet):
     serializer_class = CategorySerializer
@@ -49,6 +55,17 @@ class addCategoryServiceView(ModelViewSet):
     def get_queryset(self):
         (category,created) = Category.objects.get_or_create(id=self.kwargs['category_pk'])
         return CategoryService.objects.filter(category_id = category)
+
+class addServiceGalleryView(ModelViewSet):
+    serializer_class = ServiceGallerySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'service_id':self.kwargs['service_pk']}
+    
+    def get_queryset(self):
+        service = CategoryService.objects.get(id = self.kwargs['service_pk'])
+        return ServiceGallery.objects.filter(service_id = service)
 
 
 ## 2/ profile and description of barbershop
@@ -98,8 +115,6 @@ class BarberPanelView(ModelViewSet):
     
     def get_queryset(self):
         barber = Barber.objects.get(user_id = self.request.user.id)
-        # return OrderServices.objects.filter(barber = barber)
-
         premium = BarberPremium.objects.filter(barber = barber,expire_date__gt=timezone.now().date())
         if premium.exists():
             return OrderServices.objects.filter(barber = barber)

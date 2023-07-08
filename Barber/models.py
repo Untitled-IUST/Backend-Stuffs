@@ -66,6 +66,8 @@ class BarberPremium(models.Model):
   month = models.IntegerField(choices=during_choices,default=0)
 
 
+
+
 class Category(models.Model):
   
   # catg_choices = (
@@ -86,6 +88,11 @@ class CategoryService(models.Model):
   servicePic = models.ImageField(upload_to='Barber/Service',null=False,default='default_profile.png')
   category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name='categoryServices')
 
+
+
+class ServiceGallery(models.Model):
+  service = models.ForeignKey(CategoryService,on_delete=models.CASCADE,related_name='gallery')
+  img = models.ImageField(upload_to='Barber/Gallery',null=False,default='default_profile.png')
 
 class OrderServices(models.Model):
   

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium, Rating
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium,ServiceGallery,Rating
 from Auth.serializers import UserSerializer
 from Auth.models import User
 from Customer.serializers import  CustomerWalletSerializer
@@ -30,10 +30,30 @@ class RatingSerializer(serializers.ModelSerializer):
 
 ##############################################################
 ##### Bad Copy
+
+class InfoServiceGallerySerializer(serializers.ModelSerializer):    
+    class Meta():
+        model = ServiceGallery
+        fields = ['id','img']
+    
+    def create(self, validated_data):
+        service = CategoryService.objects.get(id = self.context['service_id'])
+        validated_data['service'] = service
+        return ServiceGallery.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.img = validated_data.get('img',instance.img)
+        instance.save()
+        return instance
+    
+
+    
+    
 class InfoCategoryServiceSerializer(serializers.ModelSerializer):
+    gallery = InfoServiceGallerySerializer(many=True,read_only=True)
     class Meta():
         model = CategoryService
-        fields = ['id','service','price','servicePic']
+        fields = ['id','service','price','servicePic','gallery']
 
     def create(self, validated_data):
         category = Category.objects.get(id = self.context['category_id'])
@@ -73,10 +93,31 @@ class InfoCategorySerializer(serializers.ModelSerializer):
 
 ## 1/ adding category and service
 
+class ServiceGallerySerializer(serializers.ModelSerializer):
+    class Meta():
+        model = ServiceGallery
+        fields = ['id','img']
+    
+    def create(self, validated_data):
+        service = CategoryService.objects.get(id = self.context['service_id'])
+        validated_data['service'] = service
+        return ServiceGallery.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.img = validated_data.get('img',instance.img)
+        instance.save()
+        return instance
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['img'] = "https://amirmohammadkomijani.pythonanywhere.com" + representation['img']
+        return representation
+    
 class CategoryServiceSerializer(serializers.ModelSerializer):
+    gallery = ServiceGallerySerializer(many=True,read_only=True)
     class Meta():
         model = CategoryService
-        fields = ['id','service','price','servicePic']
+        fields = ['id','service','price','servicePic','gallery']
 
     def create(self, validated_data):
         category = Category.objects.get(id = self.context['category_id'])
@@ -157,10 +198,12 @@ class BarberProfileSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user', None)
         user = instance.user
         user_serializer = UserSerializer(user, data=user_data)
+        user_serializer.set_password(validated_data['password'])
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
 
         return instance
+    
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
