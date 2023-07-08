@@ -140,9 +140,6 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
 
 # Comment Serializer; allow customer to post a comment
 class CommentSerializerOnPOST(serializers.ModelSerializer):
-    # customer = CustomerWalletSerializer(read_only = True)
-    # customer = serializers.SerializerMethodField()
-    # replies = serializers.SerializerMethodField()
     class Meta:
         model = Comment
         fields = ("id", "barber",  "body", )
@@ -152,20 +149,6 @@ class CommentSerializerOnPOST(serializers.ModelSerializer):
         validated_data['customer'] = self.context['request'].user.customer
         return super().create(validated_data)
 
-        # read_only_fields = ("id", "created_at","customer" )
-        # exclude = ("created_at")
-    # def get_replies(self, obj):
-    #     replies = obj.replies.all()
-    #     serializer = self.__class__(replies, many=True, context=self.context)
-    #     return serializer.data        
-
-    # def create(self, validated_data):
-    #     validated_data['customer'] = self.context['request'].user.customer
-    #     return super().create(validated_data)
-    # def get_customer(self, obj):
-    #     customer = obj.customer
-    #     serializer = CustomerWalletSerializer(customer, many=False, context=self.context)
-    #     return serializer.data
 class ReplySerializer(serializers.ModelSerializer):
     class Meta:
         model = Reply
@@ -174,7 +157,7 @@ class ReplySerializer(serializers.ModelSerializer):
 
 class CommentSerializerOnGET(serializers.ModelSerializer):
     customer = CustomerWalletSerializer(read_only = True)
-    replies = ReplySerializer(many=True, read_only=True)  # Include the replies field
+    replies = ReplySerializer(many=True, read_only=True)  
 
     class Meta:
         model = Comment

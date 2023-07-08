@@ -84,8 +84,6 @@ class OrderServices(models.Model):
   date = models.DateField(default=datetime.date.today)
   status = models.CharField(max_length=20,choices=order_status,default='ordering')
   quantity = models.IntegerField(default=1)
-  # totalPrice = models.FloatField(default=0)
-  
   class Meta:
       unique_together = ('barber', 'time','date')
       ordering = ['date','time']
@@ -95,26 +93,12 @@ class Comment(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
   barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000,)
-  # reply = models.TextField(max_length=1000,null=True, blank=True, default=None)
-  
   created_at = models.DateTimeField(auto_now_add=True)
-  # parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
-  @property
-  def replies(self):
-      return Reply.objects.filter(comment=self).reverse()
-
   class Meta:
     ordering = ['-created_at']
   def __str__(self):
     return f'[{self.id}]{self.customer} Says:{self.body};'  
-  # @property 
-  # def children(self):
-      # return Comment.objects.filter(parent_comment=self).reverse()
-  # @property
-  # def is_parent(self):
-  #     if self.parent_comment is None:
-  #         return True
-  #     return False
+
 class Reply(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="replies" )
     created_at = models.DateTimeField(auto_now_add=True,)
@@ -130,7 +114,6 @@ class Transaction(models.Model):
     amount = models.DecimalField( max_digits=5, decimal_places=2, default=0.00, blank=True,
                                  validators=(MinValueValidator(0.00), ))
     timestamp = models.DateTimeField( null=True,  blank=True , default=datetime.datetime.now())
-    # order = models.ForeignKey(OrderServices, on_delete=models.CASCADE, related_name="transactionsOrder", null=True, default=None, blank=True)
     service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name= "transactionService", null=True,default=None, blank=True )
     class Meta:
         ordering = ['-timestamp',]
