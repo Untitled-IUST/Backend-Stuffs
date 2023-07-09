@@ -40,7 +40,7 @@ class Barber(models.Model):
   phone_Number = models.CharField(max_length=11,unique = True,null=True)
   area = models.CharField(max_length=255,null=False,choices=area_chices)
   address = models.CharField(max_length=255,null=False)
-  gender = models.CharField(max_length=6,choices=gender_choices,default='M')
+  gender = models.CharField(max_length=6,choices=gender_choices,null=True)
   foundation = models.DateField(null=True)
   rate = models.FloatField(default=1,null=False)
   background = models.ImageField(upload_to='Barber/backg',null=False,default='default_profile.png')
@@ -146,25 +146,25 @@ class OrderServices(models.Model):
       ordering = ['date','time']
 
 
-class Comment(models.Model):
-  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
-  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
-  body = models.TextField(max_length=1000,)
-  reply = models.TextField(max_length=1000,null=True, blank=True, default=None)
-  created_at = models.DateTimeField(auto_now_add=True)
-  # parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
-  class Meta:
-    ordering = ['-created_at']
-  def __str__(self):
-    return f'{self.customer} Says:{self.body}; Reply:{self.reply}'  
-  # @property
-  # def children(self):
-      # return Comment.objects.filter(parent_comment=self).reverse()
-  # @property
-  # def is_parent(self):
-  #     if self.parent_comment is None:
-  #         return True
-  #     return False
+# class Comment(models.Model):
+#   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
+#   barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+#   body = models.TextField(max_length=1000,)
+#   reply = models.TextField(max_length=1000,null=True, blank=True, default=None)
+#   created_at = models.DateTimeField(auto_now_add=True)
+#   # parent_comment = models.ForeignKey("self", null=True, default=None, on_delete=models.CASCADE, related_name="replies")
+#   class Meta:
+#     ordering = ['-created_at']
+#   def __str__(self):
+#     return f'{self.customer} Says:{self.body}; Reply:{self.reply}'  
+#   # @property
+#   # def children(self):
+#       # return Comment.objects.filter(parent_comment=self).reverse()
+#   # @property
+#   # def is_parent(self):
+#   #     if self.parent_comment is None:
+#   #         return True
+#   #     return False
 
 
 
@@ -180,7 +180,7 @@ class Rating(models.Model):
      return f"{self.customer} Rates {self.barber}:({self.rating})"
 
 
-class Comment(models.Model):
+class Comments(models.Model):
   customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
   barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
   body = models.TextField(max_length=1000,)
@@ -191,6 +191,6 @@ class Comment(models.Model):
     return f'[{self.id}]{self.customer} Says:{self.body};'  
 
 class Reply(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="replies" )
+    comments = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name="replies",null=True )
     created_at = models.DateTimeField(auto_now_add=True,)
-    
+    text_body = models.TextField(max_length=1000,default="comment-reply")   

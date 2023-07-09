@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium,ServiceGallery,Rating,Reply
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comments,BarberPremium,ServiceGallery,Rating,Reply
 from Auth.serializers import UserSerializer
 from Auth.models import User
 from Customer.serializers import  CustomerWalletSerializer,CustomerCreditSerializer
@@ -265,7 +265,7 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
         return instance
 class CommentSerializerOnPOST(serializers.ModelSerializer):
     class Meta:
-        model = Comment
+        model = Comments
         fields = ("id", "barber",  "body", )
         # read_only_fields = ("id", "created_at","customer" )
 
@@ -284,7 +284,7 @@ class CommentSerializerOnGET(serializers.ModelSerializer):
     replies = ReplySerializer(many=True, read_only=True)  
 
     class Meta:
-        model = Comment
+        model = Comments
         fields = "__all__"
         read_only_fields = ("id", "created_at",)
 class newCommentSerializerOnPOST(serializers.ModelSerializer):
@@ -370,13 +370,13 @@ class CommentSerializerOnPOST(serializers.ModelSerializer):
     # customer = serializers.SerializerMethodField()
     # replies = serializers.SerializerMethodField()
     class Meta:
-        model = Comment
+        model = Comments
         fields = ("id", "barber", "body", "created_at",)
     
     def create(self, validated_data):
         (customer,created) = Customer.objects.get_or_create(user_id = self.context['customer_id'])
         validated_data['customer'] = customer
-        return Comment.objects.create(**validated_data)
+        return Comments.objects.create(**validated_data)
         # read_only_fields = ("id", "created_at","customer" )
         # exclude = ("created_at")
     # def get_replies(self, obj):
@@ -394,13 +394,13 @@ class CommentSerializerOnPOST(serializers.ModelSerializer):
 class CommentSerializerOnGET(serializers.ModelSerializer):
     customer = CustomerWalletSerializer(read_only = True)
     class Meta:
-        model = Comment
+        model = Comments
         fields = "__all__"
         read_only_fields = ("id", "created_at",)
         
 class CommentSerializerOnPUT(serializers.ModelSerializer):
     class Meta:
-        model = Comment
+        model = Comments
         fields = ('id',"body", 'reply', 'created_at')
         read_only_fields = ('id', 'created_at',"body")
 ################################################################
