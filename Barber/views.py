@@ -13,7 +13,7 @@ from .serializers import BarberInfoSerializer,BarberProfileSerializer ,BarberAre
                         CategorySerializer,BarberDescriptionSerializer,CategoryServiceSerializer,Get_CustomerBasketSerializer, \
                         Put_CustomerBasketSerializer,Put_BarberPanelSerializer,Get_BarberPanelSerializer,\
                         CommentSerializerOnPOST, CommentSerializerOnPUT, CommentSerializerOnGET,GetBarberPremiumSerializer,PutBarberPremiumSerializer,\
-                        RatingSerializer,ServiceGallerySerializer,ChangePasswordSerializer
+                        RatingSerializer,ServiceGallerySerializer,ChangePasswordSerializer,newCommentSerializerOnPOST
 from .filters import BarberRateFilter,BarberPanelFilter
 from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
@@ -300,3 +300,46 @@ class ChangePasswordView(ModelViewSet):
     def get_queryset(self):
         user = self.request.user.id
         return User.objects.filter(id = user)
+
+class CommentCreateAPIView(CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentSerializerOnPOST
+    queryset = Comment.objects.all()    
+        
+    # def perform_create(self, serializer):
+    #     try:
+    #         customer = self.request.user   
+    #         customer_name = Customer.objects.filter(user_id = customer.id).first().first_name                 
+    #         mail_message = BaseEmailMessage(
+    #             template_name="emails/add_comment_email.html",
+    #             context={"name": customer_name}
+    #         )
+    #         mail_message.send(to=[customer])
+    #         return super().perform_create(serializer)            
+    #     except Exception as e:
+    #         print(f"Error sending email: {e}")
+    #         return super().perform_create(serializer)       
+    
+class CommentReplyAPIView(generics.CreateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = newCommentSerializerOnPOST
+    queryset = Comment.objects.all()    
+    # def perform_create(self, serializer):
+    #     try:
+    #         customer = self.request.user   
+    #         customer_name = Customer.objects.filter(user_id = customer.id).first().first_name                 
+    #         mail_message = BaseEmailMessage(
+    #             template_name="emails/reply_comment_email.html",
+    #             context={"name": customer_name}
+    #         )
+    #         mail_message.send(to=[customer])
+    #         return super().perform_create(serializer)            
+    #     except Exception as e:
+    #         print(f"Error sending email: {e}")
+    #         return super().perform_create(serializer)      
+    
+class  CommentShowAPIView(generics.ListAPIView):
+    serializer_class = CommentSerializerOnGET
+    def get_queryset(self):
+        barber_id = self.kwargs['barber_id']
+        return Comment.objects.prefetch_related("replies").filter(barber_id=barber_id)

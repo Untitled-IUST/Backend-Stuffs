@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium,ServiceGallery,Rating
+from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium,ServiceGallery,Rating,Reply
 from Auth.serializers import UserSerializer
 from Auth.models import User
 from Customer.serializers import  CustomerWalletSerializer,CustomerCreditSerializer
@@ -263,6 +263,34 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
                 customer.save()
                 instance.save()
         return instance
+class CommentSerializerOnPOST(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ("id", "barber",  "body", )
+        # read_only_fields = ("id", "created_at","customer" )
+
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user.customer
+        return super().create(validated_data)
+
+class ReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reply
+        # fields = '__all__'
+        fields = ("text_body", "created_at")
+
+class CommentSerializerOnGET(serializers.ModelSerializer):
+    customer = CustomerWalletSerializer(read_only = True)
+    replies = ReplySerializer(many=True, read_only=True)  
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+        read_only_fields = ("id", "created_at",)
+class newCommentSerializerOnPOST(serializers.ModelSerializer):
+    class Meta:
+        model=Reply
+        fields = '__all__'
         
         # elif instance.status == "BarberCancelled" and instance.date >= datetime.date.today():
             

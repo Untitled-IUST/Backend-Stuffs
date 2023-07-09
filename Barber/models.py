@@ -178,4 +178,19 @@ class Rating(models.Model):
     unique_together = ('barber', 'customer')
   def __str__(self) -> str:
      return f"{self.customer} Rates {self.barber}:({self.rating})"
+
+
+class Comment(models.Model):
+  customer = models.ForeignKey(Customer,on_delete=models.CASCADE, related_name="authors_comments")
+  barber = models.ForeignKey(Barber,on_delete=models.CASCADE, related_name="comments")
+  body = models.TextField(max_length=1000,)
+  created_at = models.DateTimeField(auto_now_add=True)
+  class Meta:
+    ordering = ['-created_at']
+  def __str__(self):
+    return f'[{self.id}]{self.customer} Says:{self.body};'  
+
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="replies" )
+    created_at = models.DateTimeField(auto_now_add=True,)
     
