@@ -5,6 +5,8 @@ from Customer.models import Customer
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+
 
 
 class Barber(models.Model):
@@ -106,6 +108,7 @@ class OrderServices(models.Model):
   order_status = (
     ('ordering','ordering'),
     ('confirmed','confirmed'),
+    ('rejected','rejected'),
     ('paid','paid'),
     ('BarberCancelled','BarberCancelled'),
     ('CustomerCancelled','CustomerCancelled'),
@@ -121,6 +124,23 @@ class OrderServices(models.Model):
   quantity = models.IntegerField(default=1)
   # totalPrice = models.FloatField(default=0)
   
+  def validate_unique(self, exclude=None):
+        super().validate_unique(exclude)
+
+        if self.status == 'confirmed':
+            existing_records = OrderServices.objects.filter(
+                barber=self.barber,
+                time=self.time,
+                date=self.date,
+            ).exclude(status='confirmed').exclude(pk=self.pk)
+
+            if existing_records.exists():
+                conflicting_order = existing_records.first()
+                if conflicting_order.status != 'confirmed':
+                    raise ValidationError(
+                        'A conflicting order with the same time already exists.'
+                    )
+
   class Meta:
       unique_together = ('barber', 'time','date')
       ordering = ['date','time']

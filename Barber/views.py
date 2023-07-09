@@ -19,6 +19,8 @@ from rest_framework.permissions import IsAuthenticated
 from Customer.models import Customer
 import datetime
 from Auth.models import User
+from django.db.models import Q
+
 
 
 
@@ -213,17 +215,22 @@ class CustomerBasketView(ModelViewSet):
     def get_queryset(self):
         (customer,created) = Customer.objects.get_or_create(user_id=self.request.user.id)
         # history = OrderServices.objects.filter(customer_id = customer)
-        return OrderServices.objects.filter(customer = customer,date__gt =  datetime.date.today(),status = "ordering")
-
+        return OrderServices.objects.filter(
+    customer=customer,date__gt=timezone.now().date(),
+    status__in=("ordering","confirmed")
+)
 
 class CustomerOrderHistoryView(ModelViewSet):
-    serializer_class = Get_CustomerBasketSerializer
+    # serializer_class = Get_CustomerBasketSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['date','status']
     # filterset_class = CustomerOrderHistoryFilter
     ordering_fields = ['date','time']
-    
+    def get_serializer_class(self):
+        if self.request.method == "PUT":
+            return Put_CustomerBasketSerializer
+        return Get_CustomerBasketSerializer
     def get_queryset(self):
         (customer,created) = Customer.objects.get_or_create(user_id=self.request.user.id)
         return OrderServices.objects.filter(customer_id = customer)

@@ -250,7 +250,7 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
     def update(self, instance,validated_data):
         if instance.status == "ordering" and instance.date >= datetime.date.today():
             change_status = validated_data.get('status',instance.status)
-            if change_status == "confirmed":
+            if change_status == "confirmed" or change_status == "rejected":
                 instance.status = validated_data.get('status',instance.status)
             instance.save()
         elif instance.status == "paid" and instance.date >= datetime.date.today():
@@ -457,14 +457,27 @@ class Get_CustomerBasketSerializer(serializers.ModelSerializer):
         return instance
     
 class Put_CustomerBasketSerializer(serializers.ModelSerializer):
+    customer = CustomerCreditSerializer()
+    service = CategoryServiceSerializer()
     class Meta:
         model = OrderServices
-        fields = ['status','quantity']
-    
-    def update(self, instance, validated_data):
-        instance.status = validated_data.get('status',instance.status)
-        instance.quantity = validated_data.get('quantity',instance.quantity)
-        instance.save()
+        fields = ['status', 'customer','service']
+
+    def update(self, instance,validated_data):
+        if instance.status == "confirmed" and instance.date >= datetime.date.today():
+            change_status = validated_data.get('status',instance.status)
+            if change_status == "paid":
+                instance.status = validated_data.get('status',instance.status)
+            instance.save()
+        elif instance.status == "paid" and instance.date >= datetime.date.today():
+            change_status = validated_data.get('status',instance.status)
+            if change_status == "CustomerCancelled":
+                instance.status = validated_data.get('status', instance.status)
+                customer = instance.customer
+                total = instance.service.price * instance.quantity
+                customer.credit += total
+                customer.save()
+                instance.save()
         return instance
 
 
