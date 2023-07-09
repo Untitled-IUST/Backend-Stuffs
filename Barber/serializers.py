@@ -255,7 +255,7 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
             instance.status = validated_data.get('status', instance.status)
             customer = instance.customer
             total = instance.service.price * instance.quantity
-            customer.credit -= total
+            customer.credit += total
             customer.save()
             instance.save()
         return instance
