@@ -468,6 +468,7 @@ class Put_CustomerBasketSerializer(serializers.ModelSerializer):
             change_status = validated_data.get('status',instance.status)
             if change_status == "paid":
                 instance.status = validated_data.get('status',instance.status)
+                instance.save()
             instance.save()
         elif instance.status == "paid" and instance.date >= datetime.date.today():
             change_status = validated_data.get('status',instance.status)
