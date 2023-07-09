@@ -107,10 +107,10 @@ class OrderServices(models.Model):
   
   order_status = (
     ('ordering','ordering'),
-    ('confirmed','confirmed'),
+    # ('confirmed','confirmed'),
     ('rejected','rejected'),
     ('paid','paid'),
-    ('BarberCancelled','BarberCancelled'),
+    # ('BarberCancelled','BarberCancelled'),
     ('CustomerCancelled','CustomerCancelled'),
     ('Done','Done'),
   )
