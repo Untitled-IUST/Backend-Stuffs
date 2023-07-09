@@ -249,15 +249,19 @@ class Put_BarberPanelSerializer(serializers.ModelSerializer):
 
     def update(self, instance,validated_data):
         if instance.status == "ordering" and instance.date >= datetime.date.today():
-            instance.status = validated_data.get('status',instance.status)
+            change_status = validated_data.get('status',instance.status)
+            if change_status == "confirmed":
+                instance.status = validated_data.get('status',instance.status)
             instance.save()
         elif instance.status == "paid" and instance.date >= datetime.date.today():
-            instance.status = validated_data.get('status', instance.status)
-            customer = instance.customer
-            total = instance.service.price * instance.quantity
-            customer.credit += total
-            customer.save()
-            instance.save()
+            change_status = validated_data.get('status',instance.status)
+            if change_status == "BarberCancelled":
+                instance.status = validated_data.get('status', instance.status)
+                customer = instance.customer
+                total = instance.service.price * instance.quantity
+                customer.credit += total
+                customer.save()
+                instance.save()
         return instance
         
         # elif instance.status == "BarberCancelled" and instance.date >= datetime.date.today():
