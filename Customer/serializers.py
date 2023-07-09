@@ -44,3 +44,8 @@ class CustomerWalletSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class CustomerCreditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['credit']
+

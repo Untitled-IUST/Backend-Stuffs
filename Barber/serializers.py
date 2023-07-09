@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Barber,OrderServices,CategoryService,Category,BarberDescription, Comment,BarberPremium,ServiceGallery,Rating
 from Auth.serializers import UserSerializer
 from Auth.models import User
-from Customer.serializers import  CustomerWalletSerializer
+from Customer.serializers import  CustomerWalletSerializer,CustomerCreditSerializer
 from Customer.models import Customer
 from dateutil.relativedelta import relativedelta
 import datetime
@@ -219,12 +219,13 @@ class BarberProfileSerializer(serializers.ModelSerializer):
 class CustomerInfoBarberPanelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['id','first_name','last_name','profile_pic']
+        fields = ['id','first_name','last_name','profile_pic','credit']
 
 
 class Get_BarberPanelSerializer(serializers.ModelSerializer):
     service = CategoryServiceSerializer()
     customer = CustomerInfoBarberPanelSerializer()
+    # credit = CustomerCreditSerializer()
     originalPrice = serializers.SerializerMethodField(method_name='original_price')
     totalCost = serializers.SerializerMethodField(method_name='total')
     class Meta:
@@ -238,16 +239,54 @@ class Get_BarberPanelSerializer(serializers.ModelSerializer):
         return obj.service.price * obj.quantity
 
     
+
 class Put_BarberPanelSerializer(serializers.ModelSerializer):
+    customer = CustomerCreditSerializer()
+    service = CategoryServiceSerializer()
     class Meta:
         model = OrderServices
-        fields = ['status']
+        fields = ['status', 'customer','service']
 
-    def update(self, instance, validated_data):
+    def update(self, instance,validated_data):
         if instance.status == "ordering" and instance.date >= datetime.date.today():
             instance.status = validated_data.get('status',instance.status)
-        instance.save()
+            instance.save()
+        elif instance.status == "paid" and instance.date >= datetime.date.today():
+            instance.status = validated_data.get('status', instance.status)
+            customer = instance.customer
+            total = instance.service.price * instance.quantity
+            customer.credit -= total
+            customer.save()
+            instance.save()
         return instance
+        
+        # elif instance.status == "BarberCancelled" and instance.date >= datetime.date.today():
+            
+        
+        # Update the credit field of the nested customer serializer
+        # customer_data = validated_data.get('customer')
+        # if customer_data:
+        #     customer = instance.customer
+        #     customer.credit = customer_data.get('credit', customer.credit)
+        #     customer.save()
+        # customer_data = validated_data.get('customer')
+        # customer = instance.customer
+        # customer_serializer = CustomerCreditSerializer(customer,data=customer_data)
+        # customer_serializer.is_valid(raise_exception=True)
+        # customer_serializer.save()
+        
+        # instance.save()
+        # return instance
+
+
+
+        # user_data = validated_data.pop('user', None)
+        # user = instance.user
+        # user_serializer = UserSerializer(user, data=user_data)
+        # # user_serializer.password = user_serializer.set_password(validated_data['password'])
+        # user_serializer.is_valid(raise_exception=True)
+        # user_serializer.save()
+        # return instance
 
 
 class GetBarberPremiumSerializer(serializers.ModelSerializer):
